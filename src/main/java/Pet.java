@@ -1,7 +1,9 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Pet {
-
+  private String animalName;
   private String animalType;
   private String raceType;
   private int animalAge;
@@ -10,14 +12,24 @@ public class Pet {
   private LocalDate checkOutDate;
   private Service service;
 
-  public Pet(String animalType, String raceType, int animalAge, boolean vaccinations, LocalDate checkInDate, LocalDate checkOutDate, Service service) {
+  public Pet(String animalName, String animalType, String raceType, int animalAge, boolean vaccinations, LocalDate checkInDate, LocalDate checkOutDate, Service service) {
+    this.animalName = animalName;
     this.animalType = animalType;
     this.raceType = raceType;
     this.animalAge = animalAge;
     this.vaccinations = vaccinations;
     this.checkInDate = checkInDate;
+    DateTimeFormatter.ofPattern("YYYY-MM-DD");
     this.checkOutDate = checkOutDate;
     this.service = service;
+  }
+
+  public String getAnimalName() {
+    return animalName;
+  }
+
+  public void setAnimalName(String animalName) {
+    this.animalName = animalName;
   }
 
   public String getAnimalType() {
@@ -75,4 +87,23 @@ public class Pet {
   public void setService(Service service) {
     this.service = service;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Pet pet = (Pet) o;
+    return getAnimalAge() == pet.getAnimalAge() &&
+            Objects.equals(getAnimalName(), pet.getAnimalName()) &&
+            Objects.equals(getAnimalType(), pet.getAnimalType()) &&
+            Objects.equals(getRaceType(), pet.getRaceType());
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hash(getAnimalName(), getAnimalType(), getRaceType(), getAnimalAge());
+  }
+
+
 }

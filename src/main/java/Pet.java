@@ -1,5 +1,4 @@
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Pet {
@@ -12,15 +11,14 @@ public class Pet {
   private LocalDate checkOutDate;
   private Service service;
 
-  public Pet(String animalName, String animalType, String raceType, int animalAge, boolean vaccinations, LocalDate checkInDate, LocalDate checkOutDate, Service service) {
+  public Pet(String animalName, String animalType, String raceType, int animalAge, boolean vaccinations, String checkInDate, String checkOutDate, Service service) {
     this.animalName = animalName;
     this.animalType = animalType;
     this.raceType = raceType;
     this.animalAge = animalAge;
     this.vaccinations = vaccinations;
-    this.checkInDate = checkInDate;
-    DateTimeFormatter.ofPattern("YYYY-MM-DD");
-    this.checkOutDate = checkOutDate;
+    this.checkInDate = LocalDate.parse(checkInDate);
+    this.checkOutDate = LocalDate.parse(checkOutDate);
     this.service = service;
   }
 
@@ -105,5 +103,17 @@ public class Pet {
     return Objects.hash(getAnimalName(), getAnimalType(), getRaceType(), getAnimalAge());
   }
 
-
+  @Override
+  public String toString() {
+    return "Pet{" +
+            "animalName='" + animalName + '\'' +
+            ", animalType='" + animalType + '\'' +
+            ", raceType='" + raceType + '\'' +
+            ", animalAge=" + animalAge +
+            ", vaccinations=" + vaccinations +
+            ", checkInDate=" + checkInDate +
+            ", checkOutDate=" + checkOutDate +
+            ", service=" + service +
+            '}';
+  }
 }

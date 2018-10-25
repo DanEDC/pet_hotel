@@ -2,7 +2,11 @@ import java.util.LinkedList;
 
 public class HotelAdministration {
 
-    private LinkedList<Pet> registeredPetsList = new LinkedList<>();
+    private LinkedList<Pet> registeredPetsList;
+
+    public HotelAdministration() {
+        this.registeredPetsList = new LinkedList<>();
+    }
 
     public void registerNewPet (Pet pet) {
         if (registeredPetsList.size() == 5) {
@@ -46,7 +50,7 @@ public class HotelAdministration {
     public void printRegisteredPets (){
         for(int i=0; i<registeredPetsList.size(); i++){
             Pet petToPrint = registeredPetsList.get(i);
-            System.out.println(i + ". " + petToPrint.getAnimalName() + ", " +petToPrint.getAnimalType() + ", " +petToPrint.getRaceType()
+            System.out.println((i + 1) +". " + petToPrint.getAnimalName() + ", " +petToPrint.getAnimalType() + ", " +petToPrint.getRaceType()
                     + ", " + petToPrint.getAnimalAge() + ", " + petToPrint.isVaccinations() + ", " + petToPrint.getCheckInDate() + ", "
             + petToPrint.getCheckOutDate());
         }

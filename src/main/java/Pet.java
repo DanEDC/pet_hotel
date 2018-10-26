@@ -6,17 +6,15 @@ public class Pet {
   private String animalType;
   private String raceType;
   private int animalAge;
-  private boolean vaccinations;
   private LocalDate checkInDate;
   private LocalDate checkOutDate;
   private Service service;
 
-  public Pet(String animalName, String animalType, String raceType, int animalAge, boolean vaccinations, String checkInDate, String checkOutDate, Service service) {
+  public Pet(String animalName, String animalType, String raceType, int animalAge, String checkInDate, String checkOutDate, Service service) {
     this.animalName = animalName;
     this.animalType = animalType;
     this.raceType = raceType;
     this.animalAge = animalAge;
-    this.vaccinations = vaccinations;
     this.checkInDate = LocalDate.parse(checkInDate);
     this.checkOutDate = LocalDate.parse(checkOutDate);
     this.service = service;
@@ -52,14 +50,6 @@ public class Pet {
 
   public void setAnimalAge(int animalAge) {
     this.animalAge = animalAge;
-  }
-
-  public boolean isVaccinations() {
-    return vaccinations;
-  }
-
-  public void setVaccinations(boolean vaccinations) {
-    this.vaccinations = vaccinations;
   }
 
   public LocalDate getCheckInDate() {
@@ -105,15 +95,14 @@ public class Pet {
 
   @Override
   public String toString() {
-    return "Pet{" +
-            "animalName='" + animalName + '\'' +
-            ", animalType='" + animalType + '\'' +
-            ", raceType='" + raceType + '\'' +
-            ", animalAge=" + animalAge +
-            ", vaccinations=" + vaccinations +
-            ", checkInDate=" + checkInDate +
-            ", checkOutDate=" + checkOutDate +
-            ", service=" + service +
-            '}';
+    return
+        "Pet name: '" + animalName + '\'' +
+        ", Animal type: '" + animalType + '\'' +
+        ", Race: '" + raceType + '\'' +
+        ", Age: '" + animalAge + '\'' +
+        ", Check in date: '" + checkInDate + '\'' +
+        ", Check out date: '" + checkOutDate + '\'' +
+        ", Service: '" + service + '\'';
+
   }
 }

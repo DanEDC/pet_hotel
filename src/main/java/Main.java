@@ -8,11 +8,11 @@ public class Main {
         Scanner scanner  = new Scanner(System.in);
 
        Pet pet1 = new Pet("Binek", "Dog", "Dogg", 8, "2018-05-02", "2018-10-30", null);
-        Pet pet2 = new Pet("Olek", "Dog", "Dogg", 2,  "2018-05-02", "2018-10-31", null);
+        Pet pet2 = new Pet("Olek", "Dog", "Dogg", 2,  "2018-05-02", "2018-10-30", null);
         Pet pet3 = new Pet("Reksio", "Dog", "Dogg", 1,  "2018-05-02", "2018-10-31", null);
         Pet pet4 = new Pet("Nesik", "Cat", "Dogg", 5,  "2018-05-02", "2018-10-31", null);
         Pet pet5 = new Pet("Fifraczek", "Dog", "Dogg", 8,  "2018-05-02", "2018-10-31", null);
-        Pet pet6 = new Pet("Bolek", "Cat", "Cat", 10,  "2018-05-02", "2018-10-31", null);
+        Pet pet6 = new Pet("Bolek", "Cat", "Cat", 10,  "2018-10-30", "2018-10-31", null);
 
 
         hotelAdministration.registerNewPet(pet1);

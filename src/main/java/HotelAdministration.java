@@ -5,132 +5,152 @@ import java.util.Scanner;
 
 public class HotelAdministration {
 
-  private LinkedList<Pet> registeredPetsList;
-  private LinkedList<Pet> reserveList;
-  private int placesInHotel = 5;
+    private LinkedList<Pet> registeredPetsList;
+    private LinkedList<Pet> reserveList;
+    private int placesInHotel = 5;
 
-  public HotelAdministration() {
-    this.registeredPetsList = new LinkedList<>();
-    this.reserveList = new LinkedList<>();
-    hotelCheckOutCheckIn();
-  }
-
-  public void registerNewPet(Pet pet) {
-
-    if (registeredPetsList.size() == placesInHotel && !findPet(pet, reserveList)) {
-      reserveList.add(pet);
-      pet.setCheckInDate(setCheckInDateForReservePets());
-      System.out.println("The hotel is currently fully booked, " + pet.getAnimalName()
-          + " has been added to the reserve list. Your Pet will be checked in to the hotel at "
-          + pet.getCheckInDate() + " earliest");
-    } else if (registeredPetsList.size() == placesInHotel && findPet(pet, reserveList)) {
-      System.out.println("Your pet is already added to the reserve list");
-    } else {
-      if (!findPet(pet, registeredPetsList)) {
-        registeredPetsList.add(pet);
-        System.out.println(
-            pet.getAnimalName() + " has been successful registered in the hotel from " + pet
-                .getCheckInDate()
-                + " to " + pet.getCheckOutDate());
-      } else {
-        System.out.println(pet.getAnimalName() + " is already registered in the hotel");
-      }
+    public HotelAdministration() {
+        this.registeredPetsList = new LinkedList<>();
+        this.reserveList = new LinkedList<>();
+        hotelCheckOutCheckIn();
     }
-  }
 
-  private boolean findPet(Pet pet, LinkedList<Pet> list) {
-    for (Pet petToFind : list) {
-      if (petToFind.equals(pet)) {
-        return true;
-      }
-    }
-    return false;
-  }
+    public void registerNewPet(Pet pet) {
 
-  public void deletePetRegistration(int index, String petName) {
-    if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
-      registeredPetsList.remove(index - 1);
-      System.out
-          .println(petName + " from position " + index + ". has been removed from the hotel list");
-      if (reserveList.size() > 0) {
-        registeredPetsList.add(reserveList.getFirst());
-        System.out.println(reserveList.getFirst().getAnimalName()
-            + " has been moved from reserve list to the hotel list");
-        reserveList.removeFirst();
-      }
-    } else {
-      System.out.println(
-          petName + " is not found on position " + index + ". Delete registration failed");
+        if (registeredPetsList.size() == placesInHotel && !findPet(pet, reserveList)) {
+            reserveList.add(pet);
+//            if (pet.getCheckInDate().isAfter(getEarlierCheckOutDateOfRegisteredPets())) {
+//                pet.setCheckInDate(getEarlierCheckOutDateOfRegisteredPets());
+//            }
+            System.out.println("The hotel is currently fully booked, " + pet.getAnimalName()
+                    + " has been added to the reserve list. Your Pet will be checked in to the hotel at "
+                    + pet.getCheckInDate() + " earliest");
+        } else if (registeredPetsList.size() == placesInHotel && findPet(pet, reserveList)) {
+            System.out.println("Your pet is already added to the reserve list");
+        } else {
+            if (!findPet(pet, registeredPetsList)) {
+                registeredPetsList.add(pet);
+                System.out.println(
+                        pet.getAnimalName() + " has been successful registered in the hotel from " + pet
+                                .getCheckInDate()
+                                + " to " + pet.getCheckOutDate());
+            } else {
+                System.out.println(pet.getAnimalName() + " is already registered in the hotel");
+            }
+        }
     }
-  }
 
-  public void modifyPetRegistration(int index, String petName, Scanner scanner) {
-    if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
-      Pet petToChange = registeredPetsList.get(index - 1);
-      System.out.println("Please select new details for " + petName + ":");
-      System.out.println("Enter animal type:");
-      petToChange.setAnimalType(scanner.next());
-      System.out.println("Enter animal race:");
-      petToChange.setRaceType(scanner.next());
-      System.out.println("Enter animal age:");
-      petToChange.setAnimalAge(scanner.nextInt());
-      System.out.println("Enter check out date");
-      petToChange.setCheckOutDate(LocalDate.parse(scanner.next()));
-      System.out.println("Change data succeed:");
-      System.out.println(petToChange);
-      hotelCheckOutCheckIn();
+    private boolean findPet(Pet pet, LinkedList<Pet> list) {
+        for (Pet petToFind : list) {
+            if (petToFind.equals(pet)) {
+                return true;
+            }
+        }
+        return false;
     }
-  }
 
-  public void printRegisteredPets() {
-    System.out.println("Hotel list:");
-    for (int i = 0; i < registeredPetsList.size(); i++) {
-      Pet petToPrint = registeredPetsList.get(i);
-      System.out.println((i + 1) + ". " + petToPrint);
+    public void deletePetRegistration(int index, String petName) {
+        if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
+            registeredPetsList.remove(index - 1);
+            System.out
+                    .println(petName + " from position " + index + ". has been removed from the hotel list");
+            if (reserveList.size() > 0) {
+                registeredPetsList.add(reserveList.getFirst());
+                System.out.println(reserveList.getFirst().getAnimalName()
+                        + " has been moved from reserve list to the hotel list");
+                reserveList.removeFirst();
+            }
+        } else {
+            System.out.println(
+                    petName + " is not found on position " + index + ". Delete registration failed");
+        }
     }
-    System.out.println("Reserve list:");
-    for (int i = 0; i < reserveList.size(); i++) {
-      Pet petToPrint = reserveList.get(i);
-      System.out.println((i + 1) + ". " + petToPrint);
-    }
-  }
 
-  public Pet createNewPetAccount(String animalName, String animalType, String raceType,
-      int animalAge, String checkInDate, String checkOutDate, Service service) {
-    Pet newPet = new Pet(animalName, animalType, raceType, animalAge, checkInDate, checkOutDate,
-        service);
-    return newPet;
-  }
+    public void modifyPetRegistration(int index, String petName, Scanner scanner) {
+        if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
+            Pet petToChange = registeredPetsList.get(index - 1);
+            System.out.println("Please select new details for " + petName + ":");
+            System.out.println("Enter animal type:");
+            petToChange.setAnimalType(scanner.next());
+            System.out.println("Enter animal race:");
+            petToChange.setRaceType(scanner.next());
+            System.out.println("Enter animal age:");
+            petToChange.setAnimalAge(scanner.nextInt());
+            System.out.println("Enter check out date");
+            petToChange.setCheckOutDate(LocalDate.parse(scanner.next()));
+            System.out.println("Change data succeed:");
+            System.out.println(petToChange);
+            hotelCheckOutCheckIn();
+        }
+    }
 
-  public void hotelCheckOutCheckIn() {
-    ListIterator<Pet> listIterator = registeredPetsList.listIterator();
-    while (listIterator.hasNext()) {
-      if (LocalDate.now().isEqual(listIterator.next().getCheckOutDate())) {
-        System.out.println(
-            listIterator.previous().getAnimalName() + " has been checked out from the hotel");
-        listIterator.remove();
-      }
+    public void printRegisteredPets() {
+        System.out.println("Hotel list:");
+        for (int i = 0; i < registeredPetsList.size(); i++) {
+            Pet petToPrint = registeredPetsList.get(i);
+            System.out.println((i + 1) + ". " + petToPrint);
+        }
+        System.out.println("Reserve list:");
+        for (int i = 0; i < reserveList.size(); i++) {
+            Pet petToPrint = reserveList.get(i);
+            System.out.println((i + 1) + ". " + petToPrint);
+        }
     }
-    ListIterator<Pet> reserveListIterator = reserveList.listIterator();
-    while (reserveListIterator.hasNext() && registeredPetsList.size() < placesInHotel) {
-      registeredPetsList.add(reserveListIterator.next());
-      System.out.println(
-          reserveListIterator.previous().getAnimalName() + " has been checked in to the hotel");
-      reserveListIterator.remove();
-    }
-  }
 
-  private LocalDate setCheckInDateForReservePets() {
-    ListIterator<Pet> listIterator = registeredPetsList.listIterator();
-    LocalDate earlierCheckOutDate = registeredPetsList.getFirst().getCheckOutDate();
-    while (listIterator.hasNext()) {
-      int check = listIterator.next().getCheckOutDate().compareTo(earlierCheckOutDate);
-      if (check < 0) {
-        earlierCheckOutDate = listIterator.previous().getCheckOutDate();
-      }
+    public Pet createNewPetAccount(String animalName, String animalType, String raceType,
+                                   int animalAge, String checkInDate, String checkOutDate, Service service) {
+        Pet newPet = new Pet(animalName, animalType, raceType, animalAge, checkInDate, checkOutDate,
+                service);
+        return newPet;
     }
-    return earlierCheckOutDate;
-  }
+
+    public void hotelCheckOutCheckIn() {
+        ListIterator<Pet> listIterator = registeredPetsList.listIterator();
+        while (listIterator.hasNext()) {
+            if (LocalDate.now().isBefore(listIterator.next().getCheckOutDate())) {
+            } else {
+                System.out.println(listIterator.previous().getAnimalName() + " has been checked out from the hotel");
+                listIterator.remove();
+            }
+        }
+        ListIterator<Pet> reserveListIterator = reserveList.listIterator();
+        while (reserveListIterator.hasNext() && registeredPetsList.size() < placesInHotel) {
+            registeredPetsList.add(reserveListIterator.next());
+            System.out.println(
+                    reserveListIterator.previous().getAnimalName() + " has been checked in to the hotel");
+            reserveListIterator.remove();
+        }
+    }
+
+    private LocalDate getEarlierCheckOutDateOfRegisteredPets() {
+        ListIterator<Pet> listIterator = registeredPetsList.listIterator();
+        LocalDate earlierCheckOutDate = registeredPetsList.getFirst().getCheckOutDate();
+        while (listIterator.hasNext()) {
+            int check = listIterator.next().getCheckOutDate().compareTo(earlierCheckOutDate);
+            if (check < 0) {
+                earlierCheckOutDate = listIterator.previous().getCheckOutDate();
+            }
+        }
+        return earlierCheckOutDate;
+    }
+
+    public boolean checkBetweenLists() {
+        for (int i = 0; i < reserveList.size(); i++) {
+            for (int j = 0; j < registeredPetsList.size(); j++) {
+                if ((reserveList.get(i).getCheckInDate().isBefore(registeredPetsList.get(j).getCheckInDate()))
+                        && (!reserveList.get(i).getCheckOutDate().isAfter(registeredPetsList.get(j).getCheckInDate()))) {
+                    reserveList.add(registeredPetsList.get(j));
+                    registeredPetsList.remove(j);
+                    registeredPetsList.add(reserveList.get(i));
+                    reserveList.remove(i);
+                    return true;
+                }
+
+            }
+
+        }
+        return false;
+    }
 }
 
 

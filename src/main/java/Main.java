@@ -7,40 +7,45 @@ public class Main {
         HotelAdministration hotelAdministration = new HotelAdministration();
         Scanner scanner  = new Scanner(System.in);
 
-      Pet pet1 = new Pet("Binek", "Dog", "Dogg", 8, "2018-10-24", "2018-11-01", null);
-      Pet pet2 = new Pet("Olek", "Dog", "Dogg", 2, "2018-10-24", "2018-10-31", null);
-      Pet pet3 = new Pet("Reksio", "Dog", "Dogg", 1, "2018-10-30", "2018-11-25", null);
-      Pet pet4 = new Pet("Nesik", "Cat", "Dogg", 5, "2018-10-30", "2018-11-15", null);
-      Pet pet5 = new Pet("Fifraczek", "Dog", "Dogg", 8, "2018-10-30", "2018-10-31", null);
-      Pet pet6 = new Pet("Bolek", "Cat", "Cat", 10, "2018-10-22", "2018-10-31", null);
-      Pet pet7 = new Pet("Kicius", "Cat", "Cat", 6, "2018-10-22", "2018-10-29", null);
-      Pet pet8 = new Pet("Felek", "Cat", "Cat", 3, "2018-10-30", "2018-11-10", null);
+      boolean quit = false;
+      int choice = 0;
+      printMenu();
+      while (!quit) {
+        System.out.println("Enter your choice: ");
+        choice = scanner.nextInt();
+        scanner.nextLine();
 
-        hotelAdministration.registerNewPet(pet1);
-        hotelAdministration.registerNewPet(pet2);
-        hotelAdministration.registerNewPet(pet3);
-        hotelAdministration.registerNewPet(pet4);
-        hotelAdministration.registerNewPet(pet5);
-        hotelAdministration.registerNewPet(pet6);
-        hotelAdministration.registerNewPet(pet7);
-        //hotelAdministration.registerNewPet(pet8);
-
-        hotelAdministration.printRegisteredPets();
-
-        //hotelAdministration.deletePetRegistration(2, "Olek");
-
-        //hotelAdministration.printRegisteredPets();
-        //hotelAdministration.deletePetRegistration(2, "Olek");
-
-        //hotelAdministration.modifyPetRegistration(1,"Binek", scanner);
-
-      //hotelAdministration.hotelCheckOutCheckIn();
-      //hotelAdministration.printRegisteredPets();
-        hotelAdministration.checkBetweenLists();
-        hotelAdministration.checkBetweenLists();
-        hotelAdministration.printRegisteredPets();
-
-
+        switch (choice) {
+          case 0:
+            printMenu();
+            break;
+          case 1:
+            hotelAdministration.registerNewPet(scanner);
+            break;
+          case 2:
+            hotelAdministration.modifyPetRegistration(scanner);
+            break;
+          case 3:
+            hotelAdministration.deletePetRegistration(scanner);
+            break;
+          case 4:
+            hotelAdministration.printRegisteredPets();
+            break;
+          case 5:
+            quit = true;
+            break;
+        }
+      }
     }
+
+  public static void printMenu() {
+    System.out.println("\nPress ");
+    System.out.println("\n 0 - To print choice options");
+    System.out.println("\n 1 - To register Pet in the hotel");
+    System.out.println("\n 2 - To modify Pet registration");
+    System.out.println("\n 3 - To delete Pet registration");
+    System.out.println("\n 4 - To print hotel lists");
+    System.out.println("\n 5 - To quit the application");
+  }
 
 }

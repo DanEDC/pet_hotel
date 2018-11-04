@@ -7,6 +7,18 @@ public class Main {
         HotelAdministration hotelAdministration = new HotelAdministration();
         Scanner scanner  = new Scanner(System.in);
 
+      Pet pet1 = new Pet("Binek", "Dog", "Labrador", 4, "2018-11-01", "2018-11-08", null);
+      Pet pet2 = new Pet("Franek", "Cat", "Cat", 2, "2018-11-01", "2018-11-08", null);
+      Pet pet3 = new Pet("Olek", "Cat", "Cat", 8, "2018-11-01", "2018-11-08", null);
+      Pet pet4 = new Pet("Nesik", "Cat", "Cat", 7, "2018-11-01", "2018-11-08", null);
+      Pet pet5 = new Pet("Fifraczek", "Dog", "York", 8, "2018-11-07", "2018-11-08", null);
+
+      hotelAdministration.registerNewPet(pet1);
+      hotelAdministration.registerNewPet(pet2);
+      hotelAdministration.registerNewPet(pet3);
+      hotelAdministration.registerNewPet(pet4);
+      hotelAdministration.registerNewPet(pet5);
+
       boolean quit = false;
       int choice = 0;
       printMenu();

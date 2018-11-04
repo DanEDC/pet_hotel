@@ -10,13 +10,13 @@ public class Pet {
   private LocalDate checkOutDate;
   private Service service;
 
-  public Pet(String animalName, String animalType, String raceType, int animalAge, LocalDate checkInDate, LocalDate checkOutDate, Service service) {
+    public Pet(String animalName, String animalType, String raceType, int animalAge, String checkInDate, String checkOutDate, Service service) {
     this.animalName = animalName;
     this.animalType = animalType;
     this.raceType = raceType;
     this.animalAge = animalAge;
-    this.checkInDate = checkInDate;
-    this.checkOutDate = checkOutDate;
+        this.checkInDate = LocalDate.parse(checkInDate);
+        this.checkOutDate = LocalDate.parse(checkOutDate);
     this.service = service;
   }
 

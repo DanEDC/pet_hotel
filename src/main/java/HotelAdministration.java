@@ -1,4 +1,6 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Scanner;
@@ -15,59 +17,68 @@ public class HotelAdministration {
         hotelCheckOutCheckIn();
     }
 
-    private Pet createNewPet(Scanner scanner){
+    private Pet createNewPet(Scanner scanner) {
         System.out.println("Enter animal name:");
         String animalName = scanner.next();
         System.out.println("Enter animal type:");
         String animalType = scanner.next();
         System.out.println("Enter animal race:");
-        String raceType  = scanner.next();
+        String raceType = scanner.next();
         System.out.println("Enter animal age:");
-        int animalAge = scanner.nextInt();
+        int animalAge = checkAgeFormat(scanner);
         System.out.println("Enter check in date, YYYY-MM-DD:");
-        LocalDate checkInDate = (LocalDate.parse(scanner.next()));
-        System.out.println("Enter check in date, YYYY-MM-DD:");
-        LocalDate checkOutDate = (LocalDate.parse(scanner.next()));
-        if(!checkOutDate.isAfter(checkInDate)){
-            System.out.println("Check out date must be equal or after the check in date:");
-            checkOutDate = (LocalDate.parse(scanner.next()));
+        String checkInDate = checkDateFormat(scanner);
+        LocalDate checkInDateParse = LocalDate.parse(checkInDate);
+        System.out.println("Enter check out date, YYYY-MM-DD:");
+        String checkOutDate = checkDateFormat(scanner);
+        LocalDate checkOutDateParse = LocalDate.parse(checkOutDate);
+        if (!checkOutDateParse.isAfter(checkInDateParse)) {
+            System.out.println("Check out date must be at least one day after the check in date:");
+            checkOutDate = checkDateFormat(scanner);
         }
         Service service = null;
         Pet newPet = new Pet(animalName, animalType, raceType, animalAge, checkInDate, checkOutDate, service);
         return newPet;
     }
 
-    public void registerNewPet(Scanner scanner) {
+    public boolean registerNewPet(Scanner scanner) {
         Pet pet = createNewPet(scanner);
         if (registeredPetsList.size() == placesInHotel && !findPet(pet, reserveList)) {
             reserveList.add(pet);
-            checkAvailabilityBetweenLists(pet);
             if (checkAvailabilityBetweenLists(pet)) {
                 System.out.println(
                         pet.getAnimalName() + " has been successful registered in the hotel from " + pet.getCheckInDate() + " to " + pet.getCheckOutDate());
+                return true;
             } else {
                 if (pet.getCheckInDate().isBefore(getEarlierCheckOutDateOfRegisteredPets())) {
                     pet.setCheckInDate(getEarlierCheckOutDateOfRegisteredPets());
-                }
-                if (!pet.getCheckOutDate().isAfter(pet.getCheckInDate())) {
+                } else if (!pet.getCheckOutDate().isAfter(pet.getCheckInDate())) {
                     pet.setCheckOutDate(pet.getCheckInDate().plusDays(1));
                 }
                 System.out.println("The hotel is currently fully booked, " + pet.getAnimalName()
                         + " has been added to the reserve list. Your Pet will be checked in to the hotel from " + pet
-                        .getCheckInDate() + " to " + pet.getCheckOutDate() + " earliest. Please go ti Option 3 in order to change check in and check out dates");
+                        .getCheckInDate() + " to " + pet.getCheckOutDate() + " earliest. Please go to Option 2 in order to change check in and check out dates");
+                return true;
             }
         } else if (registeredPetsList.size() == placesInHotel && findPet(pet, reserveList)) {
             System.out.println("Your pet is already added to the reserve list");
+            return false;
         } else {
             if (!findPet(pet, registeredPetsList)) {
                 registeredPetsList.add(pet);
                 System.out.println(
                         pet.getAnimalName() + " has been successful registered in the hotel from " + pet
                                 .getCheckInDate() + " to " + pet.getCheckOutDate());
+                return true;
             } else {
                 System.out.println(pet.getAnimalName() + " is already registered in the hotel");
+                return false;
             }
         }
+    }
+
+    public void registerNewPet(Pet pet) {
+        registeredPetsList.add(pet);
     }
 
     private boolean findPet(Pet pet, LinkedList<Pet> list) {
@@ -95,7 +106,7 @@ public class HotelAdministration {
             }
         } else if (reserveList.get(index - 1).getAnimalName().equals(petName)) {
             System.out.println(petName + " from position " + index + ". has been removed from the reserve list");
-            reserveList.remove(petName);
+            reserveList.remove(index - 1);
         } else {
             System.out.println(petName + " is not found on position " + index + ".");
         }
@@ -192,6 +203,36 @@ public class HotelAdministration {
 
         }
         return false;
+    }
+
+    private String checkDateFormat(Scanner scanner) {
+        boolean success = false;
+        while (!success) {
+            try {
+                String date = scanner.next();
+                LocalDate.parse(date);
+                success = true;
+                return date;
+            } catch (DateTimeParseException | NullPointerException e) {
+                System.out.println("Wrong date format, please try again, YYYY-MM-DD:");
+            }
+        }
+        return null;
+    }
+
+    private int checkAgeFormat(Scanner scanner) {
+        boolean success = false;
+        while (!success) {
+            try {
+                int age = scanner.nextInt();
+                success = true;
+                return age;
+            } catch (InputMismatchException e) {
+                System.out.println("Must be a number. Enter animal age:");
+                scanner.nextLine();
+            }
+        }
+        return -1;
     }
 }
 

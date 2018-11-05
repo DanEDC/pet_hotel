@@ -52,7 +52,8 @@ public class HotelAdministration {
             } else {
                 if (pet.getCheckInDate().isBefore(getEarlierCheckOutDateOfRegisteredPets())) {
                     pet.setCheckInDate(getEarlierCheckOutDateOfRegisteredPets());
-                } else if (!pet.getCheckOutDate().isAfter(pet.getCheckInDate())) {
+                }
+                if (!pet.getCheckOutDate().isAfter(pet.getCheckInDate())) {
                     pet.setCheckOutDate(pet.getCheckInDate().plusDays(1));
                 }
                 System.out.println("The hotel is currently fully booked, " + pet.getAnimalName()
@@ -135,13 +136,16 @@ public class HotelAdministration {
             System.out.println("Enter animal race:");
             petToChange.setRaceType(scanner.next());
             System.out.println("Enter animal age:");
-            petToChange.setAnimalAge(scanner.nextInt());
-            System.out.println("Enter new check in date. The date must be equal or after " + getEarlierCheckOutDateOfRegisteredPets());
-            petToChange.setCheckInDate(LocalDate.parse(scanner.next()));
+            petToChange.setAnimalAge(checkAgeFormat(scanner));
+            System.out.println("Enter new check in date. The date must be equal or after " + getEarlierCheckOutDateOfRegisteredPets() + ":");
+            LocalDate checkInDateParse = checkInDateValidation(scanner);
+            petToChange.setCheckInDate(checkInDateParse);
             System.out.println("Enter new check out date:");
-            petToChange.setCheckOutDate(LocalDate.parse(scanner.next()));
+            LocalDate checkOutDateParse = checkOutDateValidation(scanner, checkInDateParse);
+            petToChange.setCheckOutDate(checkOutDateParse);
             System.out.println("Change data succeed:");
             System.out.println(petToChange);
+            checkAvailabilityBetweenLists(petToChange);
         } else {
             System.out.println(petName + " is not found on position " + index + ".");
         }
@@ -234,7 +238,41 @@ public class HotelAdministration {
         }
         return -1;
     }
+
+    private LocalDate checkInDateValidation(Scanner scanner) {
+        boolean success = false;
+        while (!success) {
+            String date = checkDateFormat(scanner);
+            LocalDate dateParse = LocalDate.parse(date);
+            if (dateParse.isBefore(getEarlierCheckOutDateOfRegisteredPets())) {
+                System.out.println("The date must be equal or after " + getEarlierCheckOutDateOfRegisteredPets() + ":");
+            } else {
+                success = true;
+                return dateParse;
+            }
+
+        }
+        return null;
+    }
+
+    private LocalDate checkOutDateValidation(Scanner scanner, LocalDate checkInDate) {
+        boolean success = false;
+        while (!success) {
+            String date = checkDateFormat(scanner);
+            LocalDate dateParse = LocalDate.parse(date);
+            if (!dateParse.isAfter(checkInDate)) {
+                System.out.println("Check out date must be at least one day after " + checkInDate + ":");
+            } else {
+                success = true;
+                return dateParse;
+            }
+        }
+        return null;
+    }
+
+
 }
+
 
 
 

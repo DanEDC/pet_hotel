@@ -1,5 +1,4 @@
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class HotelAdministration {
@@ -8,6 +7,7 @@ public class HotelAdministration {
     private LinkedList<Pet> reserveList;
     private ArrayList<Room> roomsList = new ArrayList<>();
     private int placesInHotel = 5;
+    Validation validation;
 
     public HotelAdministration() {
         this.registeredPetsList = new LinkedList<>();
@@ -18,7 +18,7 @@ public class HotelAdministration {
 
     private void roomsInHotel(int placesInHotel) {
         for (int i = 0; i < placesInHotel; i++) {
-            Room room = new Room((i + 1), LocalDate.now(), LocalDate.now());
+            Room room = new Room((i + 1));
             roomsList.add(room);
         }
     }
@@ -31,23 +31,15 @@ public class HotelAdministration {
         System.out.println("Enter animal race:");
         String raceType = scanner.next();
         System.out.println("Enter animal age:");
-        int animalAge = checkAgeFormat(scanner);
+        int animalAge = validation.animalAgeValidation(scanner);
+        System.out.println("Enter room number you want to book, choose between 1 and " + placesInHotel + ":");
+        int roomNumber = validation.roomNumberValidation(scanner, placesInHotel);
         System.out.println("Enter check in date, YYYY-MM-DD:");
-        String checkInDate = checkDateFormat(scanner);
-        LocalDate checkInDateParse = LocalDate.parse(checkInDate);
+        LocalDate checkInDate = validation.checkInDateValidation(scanner, getEarlierCheckOutDateOfRegisteredPets());
         System.out.println("Enter check out date, YYYY-MM-DD:");
-        if (checkInDateParse.isBefore(LocalDate.now())) {
-            System.out.println("Check in date must be equal or after " + LocalDate.now());
-            checkInDate = checkDateFormat(scanner);
-        }
-        String checkOutDate = checkDateFormat(scanner);
-        LocalDate checkOutDateParse = LocalDate.parse(checkOutDate);
-        if (!checkOutDateParse.isAfter(checkInDateParse)) {
-            System.out.println("Check out date must be at least one day after the check in date:");
-            checkOutDate = checkDateFormat(scanner);
-        }
+        LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate);
         Service service = null;
-        Pet newPet = new Pet(animalName, animalType, raceType, animalAge, checkInDate, checkOutDate, service);
+        Pet newPet = new Pet(animalName, animalType, raceType, animalAge, roomNumber, checkInDate, checkOutDate, service);
         return newPet;
     }
 
@@ -146,12 +138,12 @@ public class HotelAdministration {
             System.out.println("Enter animal race:");
             petToChange.setRaceType(scanner.next());
             System.out.println("Enter animal age:");
-            petToChange.setAnimalAge(checkAgeFormat(scanner));
+            petToChange.setAnimalAge(validation.checkIntFormat(scanner));
             System.out.println("Enter new check in date. The date must be equal or after " + getEarlierCheckOutDateOfRegisteredPets() + ":");
-            LocalDate checkInDateParse = checkInDateValidation(scanner);
+            LocalDate checkInDateParse = validation.checkInDateValidation(scanner, getEarlierCheckOutDateOfRegisteredPets());
             petToChange.setCheckInDate(checkInDateParse);
             System.out.println("Enter new check out date:");
-            LocalDate checkOutDateParse = checkOutDateValidation(scanner, checkInDateParse);
+            LocalDate checkOutDateParse = validation.checkOutDateValidation(scanner, checkInDateParse);
             petToChange.setCheckOutDate(checkOutDateParse);
             System.out.println("Change data succeed:");
             System.out.println(petToChange);
@@ -172,8 +164,20 @@ public class HotelAdministration {
             Pet petToPrint = reserveList.get(i);
             System.out.println((i + 1) + ". " + petToPrint);
         }
-        System.out.println("Rooms");
-        System.out.println(roomsList);
+    }
+
+    public void checkRoomsAvailability() {
+        ListIterator<Room> roomIterator = roomsList.listIterator();
+        while (roomIterator.hasNext()) {
+            if (roomIterator.next().getOccupiedFrom() == null) {
+                roomIterator.previous();
+                System.out.println("Room number: '" + roomIterator.next().getRoomNumber() + "', Occupied from:'    ', Occupied to:'    '");
+            } else {
+                roomIterator.previous();
+                System.out.println(roomIterator.next());
+            }
+        }
+
     }
 
     private void hotelCheckOutCheckIn() {
@@ -221,71 +225,6 @@ public class HotelAdministration {
         return false;
     }
 
-    private String checkDateFormat(Scanner scanner) {
-        boolean success = false;
-        while (!success) {
-            try {
-                String date = scanner.next();
-                LocalDate.parse(date);
-                success = true;
-                return date;
-            } catch (DateTimeParseException | NullPointerException e) {
-                System.out.println("Wrong date format, please try again, YYYY-MM-DD:");
-            }
-        }
-        return null;
-    }
-
-    private int checkAgeFormat(Scanner scanner) {
-        boolean success = false;
-        while (!success) {
-            try {
-                int age = scanner.nextInt();
-                success = true;
-                return age;
-            } catch (InputMismatchException e) {
-                System.out.println("Must be a number. Enter animal age:");
-                scanner.nextLine();
-            }
-        }
-        return -1;
-    }
-
-    private LocalDate checkInDateValidation(Scanner scanner) {
-        boolean success = false;
-        while (!success) {
-            String date = checkDateFormat(scanner);
-            LocalDate dateParse = LocalDate.parse(date);
-            if (dateParse.isBefore(getEarlierCheckOutDateOfRegisteredPets())) {
-                System.out.println("The date must be equal or after " + getEarlierCheckOutDateOfRegisteredPets() + ":");
-            } else {
-                success = true;
-                return dateParse;
-            }
-
-        }
-        return null;
-    }
-
-    private LocalDate checkOutDateValidation(Scanner scanner, LocalDate checkInDate) {
-        boolean success = false;
-        while (!success) {
-            String date = checkDateFormat(scanner);
-            LocalDate dateParse = LocalDate.parse(date);
-            if (!dateParse.isAfter(checkInDate)) {
-                System.out.println("Check out date must be at least one day after " + checkInDate + ":");
-            } else {
-                success = true;
-                return dateParse;
-            }
-        }
-        return null;
-    }
-
-    private void checkHotelAvailability() {
-        System.out.println("Currently " + (registeredPetsList.size()) + " room(s) are booked, and "
-                + (placesInHotel - registeredPetsList.size()) + " room(s) are free to check in. Please check rooms availability:");
-    }
 
 
 }

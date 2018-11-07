@@ -6,10 +6,10 @@ public class Room {
     private LocalDate occupiedFrom;
     private LocalDate occupiedTo;
 
-    public Room(int roomNumber, LocalDate occupiedFrom, LocalDate occupiedTo) {
+    public Room(int roomNumber) {
         this.roomNumber = roomNumber;
-        this.occupiedFrom = occupiedFrom;
-        this.occupiedTo = occupiedTo;
+        this.occupiedFrom = null;
+        this.occupiedTo = null;
     }
 
     public int getRoomNumber() {
@@ -39,8 +39,8 @@ public class Room {
     @Override
     public String toString() {
         return "Room number: '" + roomNumber +
-                "', occupied from: '" + occupiedFrom +
-                "', occupied to: '" + occupiedTo +
+                "', Occupied from: '" + occupiedFrom +
+                "', Occupied to: '" + occupiedTo +
                 "'";
     }
 }

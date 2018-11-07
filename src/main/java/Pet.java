@@ -6,17 +6,19 @@ public class Pet {
   private String animalType;
   private String raceType;
   private int animalAge;
+  private int roomNumber;
   private LocalDate checkInDate;
   private LocalDate checkOutDate;
   private Service service;
 
-    public Pet(String animalName, String animalType, String raceType, int animalAge, String checkInDate, String checkOutDate, Service service) {
+  public Pet(String animalName, String animalType, String raceType, int animalAge, int roomNumber, LocalDate checkInDate, LocalDate checkOutDate, Service service) {
     this.animalName = animalName;
     this.animalType = animalType;
     this.raceType = raceType;
     this.animalAge = animalAge;
-        this.checkInDate = LocalDate.parse(checkInDate);
-        this.checkOutDate = LocalDate.parse(checkOutDate);
+    this.roomNumber = roomNumber;
+    this.checkInDate = checkInDate;
+    this.checkOutDate = checkOutDate;
     this.service = service;
   }
 
@@ -52,6 +54,14 @@ public class Pet {
     this.animalAge = animalAge;
   }
 
+  public int getRoomNumber() {
+    return roomNumber;
+  }
+
+  public void setRoomNumber(int roomNumber) {
+    this.roomNumber = roomNumber;
+  }
+
   public LocalDate getCheckInDate() {
     return checkInDate;
   }
@@ -82,6 +92,7 @@ public class Pet {
     if (o == null || getClass() != o.getClass()) return false;
     Pet pet = (Pet) o;
     return getAnimalAge() == pet.getAnimalAge() &&
+            getRoomNumber() == pet.getRoomNumber() &&
             Objects.equals(getAnimalName(), pet.getAnimalName()) &&
             Objects.equals(getAnimalType(), pet.getAnimalType()) &&
             Objects.equals(getRaceType(), pet.getRaceType());
@@ -90,7 +101,7 @@ public class Pet {
   @Override
   public int hashCode() {
 
-    return Objects.hash(getAnimalName(), getAnimalType(), getRaceType(), getAnimalAge());
+    return Objects.hash(getAnimalName(), getAnimalType(), getRaceType(), getAnimalAge(), getRoomNumber());
   }
 
   @Override
@@ -100,6 +111,7 @@ public class Pet {
         ", Animal type: '" + animalType + '\'' +
         ", Race: '" + raceType + '\'' +
         ", Age: '" + animalAge + '\'' +
+                ", Room number: '" + roomNumber + '\'' +
         ", Check in date: '" + checkInDate + '\'' +
         ", Check out date: '" + checkOutDate + '\'' +
         ", Service: '" + service + '\'';

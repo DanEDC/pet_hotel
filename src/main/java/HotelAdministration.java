@@ -1,20 +1,26 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.InputMismatchException;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Scanner;
+import java.util.*;
 
 public class HotelAdministration {
 
     private LinkedList<Pet> registeredPetsList;
     private LinkedList<Pet> reserveList;
+    private ArrayList<Room> roomsList = new ArrayList<>();
     private int placesInHotel = 5;
 
     public HotelAdministration() {
         this.registeredPetsList = new LinkedList<>();
         this.reserveList = new LinkedList<>();
+        roomsInHotel(placesInHotel);
         hotelCheckOutCheckIn();
+    }
+
+    private void roomsInHotel(int placesInHotel) {
+        for (int i = 0; i < placesInHotel; i++) {
+            Room room = new Room((i + 1), LocalDate.now(), LocalDate.now());
+            roomsList.add(room);
+        }
     }
 
     private Pet createNewPet(Scanner scanner) {
@@ -30,6 +36,10 @@ public class HotelAdministration {
         String checkInDate = checkDateFormat(scanner);
         LocalDate checkInDateParse = LocalDate.parse(checkInDate);
         System.out.println("Enter check out date, YYYY-MM-DD:");
+        if (checkInDateParse.isBefore(LocalDate.now())) {
+            System.out.println("Check in date must be equal or after " + LocalDate.now());
+            checkInDate = checkDateFormat(scanner);
+        }
         String checkOutDate = checkDateFormat(scanner);
         LocalDate checkOutDateParse = LocalDate.parse(checkOutDate);
         if (!checkOutDateParse.isAfter(checkInDateParse)) {
@@ -162,6 +172,8 @@ public class HotelAdministration {
             Pet petToPrint = reserveList.get(i);
             System.out.println((i + 1) + ". " + petToPrint);
         }
+        System.out.println("Rooms");
+        System.out.println(roomsList);
     }
 
     private void hotelCheckOutCheckIn() {
@@ -268,6 +280,11 @@ public class HotelAdministration {
             }
         }
         return null;
+    }
+
+    private void checkHotelAvailability() {
+        System.out.println("Currently " + (registeredPetsList.size()) + " room(s) are booked, and "
+                + (placesInHotel - registeredPetsList.size()) + " room(s) are free to check in. Please check rooms availability:");
     }
 
 

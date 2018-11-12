@@ -5,13 +5,15 @@ public class HotelAdministration {
 
     private LinkedList<Pet> registeredPetsList;
     private LinkedList<Pet> reserveList;
-    private ArrayList<Room> roomsList = new ArrayList<>();
+    private ArrayList<Room> roomsList;
     private int placesInHotel = 5;
-    Validation validation;
+    private Validation validation = new Validation();
+    private Room room = new Room();
 
     public HotelAdministration() {
         this.registeredPetsList = new LinkedList<>();
         this.reserveList = new LinkedList<>();
+        this.roomsList = new ArrayList<>();
         roomsInHotel(placesInHotel);
         hotelCheckOutCheckIn();
     }
@@ -23,7 +25,17 @@ public class HotelAdministration {
         }
     }
 
-    private Pet createNewPet(Scanner scanner) {
+    public Pet registerPetInHotel(Scanner scanner) {
+        room.printHotelRoomsAvailability(roomsList);
+        System.out.println("Enter room number you want to book, choose between 1 and " + placesInHotel + ":");
+        int roomNumber = validation.roomNumberValidation(scanner, placesInHotel);
+        Room chosenRoom = roomsList.get(roomNumber);
+        System.out.println("Please check room " + roomNumber + " availability:");
+        room.printSingleRoomAvailability(roomsList, roomNumber);
+        System.out.println("Enter check in date, YYYY-MM-DD:");
+        LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom.getOccupiedFrom(), chosenRoom.getOccupiedTo());
+        System.out.println("Enter check out date, YYYY-MM-DD:");
+        LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom.getOccupiedFrom(), chosenRoom.getOccupiedTo());
         System.out.println("Enter animal name:");
         String animalName = scanner.next();
         System.out.println("Enter animal type:");
@@ -32,52 +44,17 @@ public class HotelAdministration {
         String raceType = scanner.next();
         System.out.println("Enter animal age:");
         int animalAge = validation.animalAgeValidation(scanner);
-        System.out.println("Enter room number you want to book, choose between 1 and " + placesInHotel + ":");
-        int roomNumber = validation.roomNumberValidation(scanner, placesInHotel);
-        System.out.println("Enter check in date, YYYY-MM-DD:");
-        LocalDate checkInDate = validation.checkInDateValidation(scanner, getEarlierCheckOutDateOfRegisteredPets());
-        System.out.println("Enter check out date, YYYY-MM-DD:");
-        LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate);
         Service service = null;
         Pet newPet = new Pet(animalName, animalType, raceType, animalAge, roomNumber, checkInDate, checkOutDate, service);
-        return newPet;
-    }
-
-    public boolean registerNewPet(Scanner scanner) {
-        Pet pet = createNewPet(scanner);
-        if (registeredPetsList.size() == placesInHotel && !findPet(pet, reserveList)) {
-            reserveList.add(pet);
-            if (checkAvailabilityBetweenLists(pet)) {
-                System.out.println(
-                        pet.getAnimalName() + " has been successful registered in the hotel from " + pet.getCheckInDate() + " to " + pet.getCheckOutDate());
-                return true;
-            } else {
-                if (pet.getCheckInDate().isBefore(getEarlierCheckOutDateOfRegisteredPets())) {
-                    pet.setCheckInDate(getEarlierCheckOutDateOfRegisteredPets());
-                }
-                if (!pet.getCheckOutDate().isAfter(pet.getCheckInDate())) {
-                    pet.setCheckOutDate(pet.getCheckInDate().plusDays(1));
-                }
-                System.out.println("The hotel is currently fully booked, " + pet.getAnimalName()
-                        + " has been added to the reserve list. Your Pet will be checked in to the hotel from " + pet
-                        .getCheckInDate() + " to " + pet.getCheckOutDate() + " earliest. Please go to Option 2 in order to change check in and check out dates");
-                return true;
-            }
-        } else if (registeredPetsList.size() == placesInHotel && findPet(pet, reserveList)) {
-            System.out.println("Your pet is already added to the reserve list");
-            return false;
-        } else {
-            if (!findPet(pet, registeredPetsList)) {
-                registeredPetsList.add(pet);
-                System.out.println(
-                        pet.getAnimalName() + " has been successful registered in the hotel from " + pet
-                                .getCheckInDate() + " to " + pet.getCheckOutDate());
-                return true;
-            } else {
-                System.out.println(pet.getAnimalName() + " is already registered in the hotel");
-                return false;
-            }
+        registeredPetsList.add(newPet);
+        if (chosenRoom.getOccupiedFrom() == null || checkInDate.isBefore(chosenRoom.getOccupiedFrom())) {
+            chosenRoom.setOccupiedFrom(checkInDate);
         }
+        if (chosenRoom.getOccupiedTo() == null || checkOutDate.isAfter(chosenRoom.getOccupiedTo())) {
+            chosenRoom.setOccupiedTo(checkOutDate);
+        }
+        System.out.println(newPet.getAnimalName() + " has been successful registered in the hotel from " + newPet.getCheckInDate() + " to " + newPet.getCheckOutDate());
+        return newPet;
     }
 
     public void registerNewPet(Pet pet) {
@@ -140,10 +117,10 @@ public class HotelAdministration {
             System.out.println("Enter animal age:");
             petToChange.setAnimalAge(validation.checkIntFormat(scanner));
             System.out.println("Enter new check in date. The date must be equal or after " + getEarlierCheckOutDateOfRegisteredPets() + ":");
-            LocalDate checkInDateParse = validation.checkInDateValidation(scanner, getEarlierCheckOutDateOfRegisteredPets());
+            LocalDate checkInDateParse = validation.checkInDateValidation(scanner, getEarlierCheckOutDateOfRegisteredPets(), getEarlierCheckOutDateOfRegisteredPets());
             petToChange.setCheckInDate(checkInDateParse);
             System.out.println("Enter new check out date:");
-            LocalDate checkOutDateParse = validation.checkOutDateValidation(scanner, checkInDateParse);
+            LocalDate checkOutDateParse = validation.checkOutDateValidation(scanner, checkInDateParse, checkInDateParse, checkInDateParse);
             petToChange.setCheckOutDate(checkOutDateParse);
             System.out.println("Change data succeed:");
             System.out.println(petToChange);
@@ -164,20 +141,6 @@ public class HotelAdministration {
             Pet petToPrint = reserveList.get(i);
             System.out.println((i + 1) + ". " + petToPrint);
         }
-    }
-
-    public void checkRoomsAvailability() {
-        ListIterator<Room> roomIterator = roomsList.listIterator();
-        while (roomIterator.hasNext()) {
-            if (roomIterator.next().getOccupiedFrom() == null) {
-                roomIterator.previous();
-                System.out.println("Room number: '" + roomIterator.next().getRoomNumber() + "', Occupied from:'    ', Occupied to:'    '");
-            } else {
-                roomIterator.previous();
-                System.out.println(roomIterator.next());
-            }
-        }
-
     }
 
     private void hotelCheckOutCheckIn() {

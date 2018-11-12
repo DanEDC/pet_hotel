@@ -20,7 +20,7 @@ public class Main {
     hotelAdministration.registerNewPet(pet4);
     hotelAdministration.registerNewPet(pet5);
 
-    hotelAdministration.checkRoomsAvailability();
+    //hotelAdministration.checkRoomsAvailability();
 
     boolean quit = false;
     int choice = 0;
@@ -35,7 +35,7 @@ public class Main {
           printMenu();
           break;
         case 1:
-          hotelAdministration.registerNewPet(scanner);
+          hotelAdministration.registerPetInHotel(scanner);
           break;
         case 2:
           hotelAdministration.modifyPetRegistration(scanner);

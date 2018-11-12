@@ -1,4 +1,6 @@
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class Room {
 
@@ -6,18 +8,39 @@ public class Room {
     private LocalDate occupiedFrom;
     private LocalDate occupiedTo;
 
+    public Room() {
+    }
+
     public Room(int roomNumber) {
         this.roomNumber = roomNumber;
         this.occupiedFrom = null;
         this.occupiedTo = null;
     }
 
-    public int getRoomNumber() {
-        return roomNumber;
+    public void printHotelRoomsAvailability(ArrayList<Room> roomList) {
+        ListIterator<Room> roomIterator = roomList.listIterator();
+        System.out.println("Pet Hotel rooms availability:");
+        while (roomIterator.hasNext()) {
+            if (roomIterator.next().getOccupiedFrom() == null) {
+                roomIterator.previous();
+                System.out.println("Room number: '" + roomIterator.next().getRoomNumber() + "', Occupied from:'          ', Occupied to:'          '");
+            } else {
+                roomIterator.previous();
+                System.out.println(roomIterator.next());
+            }
+        }
     }
 
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
+    public void printSingleRoomAvailability(ArrayList<Room> roomList, int roomNumber) {
+        if (roomList.get(roomNumber).getOccupiedFrom() == null) {
+            System.out.println("Room number: '" + roomNumber + "', Occupied from:'          ', Occupied to:'          '");
+        } else {
+            System.out.println(roomList.get(roomNumber));
+        }
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
     }
 
     public LocalDate getOccupiedFrom() {

@@ -110,8 +110,7 @@ public class Pet {
         "Pet name: '" + animalName + '\'' +
         ", Animal type: '" + animalType + '\'' +
         ", Race: '" + raceType + '\'' +
-        ", Age: '" + animalAge + '\'' +
-                ", Room number: '" + roomNumber + '\'' +
+                ", Age: '" + animalAge + '\'' + ", Room number: '" + roomNumber + '\'' +
         ", Check in date: '" + checkInDate + '\'' +
         ", Check out date: '" + checkOutDate + '\'' +
         ", Service: '" + service + '\'';

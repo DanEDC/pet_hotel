@@ -23,7 +23,7 @@ public class Room {
         while (roomIterator.hasNext()) {
             if (roomIterator.next().getOccupiedFrom() == null) {
                 roomIterator.previous();
-                System.out.println("Room number: '" + roomIterator.next().getRoomNumber() + "', Occupied from:'          ', Occupied to:'          '");
+                System.out.println("Room number: '" + roomIterator.next().getRoomNumber() + "', Occupied from: '          ', Occupied to: '          '");
             } else {
                 roomIterator.previous();
                 System.out.println(roomIterator.next());
@@ -35,7 +35,7 @@ public class Room {
         if (roomList.get(roomNumber).getOccupiedFrom() == null) {
             System.out.println("Room number: '" + roomNumber + "', Occupied from:'          ', Occupied to:'          '");
         } else {
-            System.out.println(roomList.get(roomNumber));
+            System.out.println(roomList.get(roomNumber - 1));
         }
     }
 

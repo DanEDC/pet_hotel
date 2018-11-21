@@ -25,15 +25,17 @@ public class HotelAdministration {
 
     public Pet registerPetInHotel(Scanner scanner) {
         room.printHotelRoomsAvailability(roomsList);
+        System.out.println("---------");
         System.out.println("Enter room number you want to book, choose between 1 and " + placesInHotel + ":");
         int roomNumber = validation.roomNumberValidation(scanner, placesInHotel);
         Room chosenRoom = roomsList.get(roomNumber - 1);
         System.out.println("Please check room " + roomNumber + " availability:");
-        room.printSingleRoomAvailability(roomsList, roomNumber);
+        room.printSingleRoomAvailability(chosenRoom);
+        System.out.println("---------");
         System.out.println("Enter check in date, YYYY-MM-DD:");
-        LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom.getOccupiedFrom(), chosenRoom.getOccupiedTo());
+        LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom);
         System.out.println("Enter check out date, YYYY-MM-DD:");
-        LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom.getOccupiedFrom(), chosenRoom.getOccupiedTo());
+        LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom);
         System.out.println("Enter animal name:");
         String animalName = scanner.next();
         System.out.println("Enter animal type:");
@@ -45,12 +47,8 @@ public class HotelAdministration {
         Service service = null;
         Pet newPet = new Pet(animalName, animalType, raceType, animalAge, roomNumber, checkInDate, checkOutDate, service);
         registeredPetsList.add(newPet);
-        if (chosenRoom.getOccupiedFrom() == null || checkInDate.isBefore(chosenRoom.getOccupiedFrom())) {
-            chosenRoom.setOccupiedFrom(checkInDate);
-        }
-        if (chosenRoom.getOccupiedTo() == null || checkOutDate.isAfter(chosenRoom.getOccupiedTo())) {
-            chosenRoom.setOccupiedTo(checkOutDate);
-        }
+        RoomBookedDates roomBookedDates = new RoomBookedDates(checkInDate, checkOutDate);
+        chosenRoom.getBookedDates().add(roomBookedDates);
         System.out.println(newPet.getAnimalName() + " has been successful registered in the hotel from " + newPet.getCheckInDate() + " to " + newPet.getCheckOutDate());
         return newPet;
     }
@@ -59,8 +57,8 @@ public class HotelAdministration {
 
         registeredPetsList.add(pet);
         Room petRoom = roomsList.get((pet.getRoomNumber()) - 1);
-        petRoom.setOccupiedFrom(pet.getCheckInDate());
-        petRoom.setOccupiedTo(pet.getCheckOutDate());
+        RoomBookedDates roomBookedDates = new RoomBookedDates(pet.getCheckInDate(), pet.getCheckOutDate());
+        petRoom.getBookedDates().add(roomBookedDates);
     }
 
 
@@ -96,15 +94,15 @@ public class HotelAdministration {
         }
     }
 
-    public void printRegisteredPets() {
-        room.printHotelRoomsAvailability(roomsList);
-        System.out.println("-----------------------");
-        System.out.println("List of registered pets in hotel:");
-        for (int i = 0; i < registeredPetsList.size(); i++) {
-            Pet petToPrint = registeredPetsList.get(i);
-            System.out.println((i + 1) + ". " + petToPrint);
-        }
-    }
+//    public void printRegisteredPets() {
+//        room.printHotelRoomsAvailability(roomsList);
+//        System.out.println("-----------------------");
+//        System.out.println("List of registered pets in hotel:");
+//        for (int i = 0; i < registeredPetsList.size(); i++) {
+//            Pet petToPrint = registeredPetsList.get(i);
+//            System.out.println((i + 1) + ". " + petToPrint);
+//        }
+//    }
 
     private void hotelCheckOutCheckIn() {
         ListIterator<Pet> listIterator = registeredPetsList.listIterator();

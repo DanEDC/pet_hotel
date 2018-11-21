@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Validation {
@@ -66,67 +67,69 @@ public class Validation {
         return -1;
     }
 
-    public LocalDate checkInDateValidation(Scanner scanner, LocalDate roomOccupiedFromDate, LocalDate roomOccupiedToDate) {
+    public LocalDate checkInDateValidation(Scanner scanner, Room room) {
+        LinkedList<RoomAvailableDates> r = room.roomAvailability(room);
         boolean success = false;
         while (!success) {
             String date = checkDateFormat(scanner);
             LocalDate dateParse = LocalDate.parse(date);
-            if (roomOccupiedFromDate == null) {
-                if (dateParse.isBefore(LocalDate.now())) {
-                    System.out.println("The date must be equal/greater then " + LocalDate.now() + ":");
-                } else {
-                    success = true;
-                    return dateParse;
+            int check = 0;
+            for (int i = 0; i < r.size(); i++) {
+                if (r.get(i).getFreeTo() != null) {
+                    if (dateParse.isEqual(r.get(i).getFreeTo())) {
+                        System.out.println("Check in date must be at least " + r.get(i).getFreeTo().minusDays(1) + ":");
+                        check = 1;
+                    } else if (!dateParse.isBefore(r.get(i).getFreeFrom()) && (!dateParse.isAfter(r.get(i).getFreeTo()))) {
+                        success = true;
+                        return dateParse;
+                    }
                 }
-            } else if (LocalDate.now().isBefore(roomOccupiedFromDate)) {
-                if ((dateParse.isBefore(LocalDate.now()) || ((dateParse.isAfter(roomOccupiedFromDate.minusDays(1))) && (dateParse.isBefore(roomOccupiedToDate))))) {
-                    System.out.println("The date must be between " + LocalDate.now() + " - " + (roomOccupiedFromDate.minusDays(1))
-                            + ", or equal/greater then " + roomOccupiedToDate + ":");
-                } else {
-                    success = true;
-                    return dateParse;
+                if (r.get(i).getFreeTo() == null) {
+                    if (!dateParse.isBefore(r.get(i).getFreeFrom())) {
+                        success = true;
+                        return dateParse;
+                    }
                 }
-            } else {
-                if (dateParse.isBefore(roomOccupiedToDate)) {
-                    System.out.println("The date must be equal/greater then " + roomOccupiedToDate + ":");
-                } else {
-                    success = true;
-                    return dateParse;
+            }
+            if (!success) {
+                if (check == 0) {
+                    System.out.println("The date must be included in available dates:");
+                    room.printSingleRoomAvailability(room);
                 }
             }
         }
         return null;
     }
 
-    public LocalDate checkOutDateValidation(Scanner scanner, LocalDate checkInDate, LocalDate roomOccupiedFromDate, LocalDate roomOccupiedToDate) {
+    public LocalDate checkOutDateValidation(Scanner scanner, LocalDate checkInDate, Room room) {
+        LinkedList<RoomAvailableDates> r = room.roomAvailability(room);
         boolean success = false;
         while (!success) {
             String date = checkDateFormat(scanner);
             LocalDate dateParse = LocalDate.parse(date);
-            if (roomOccupiedToDate == null) {
-                if (!dateParse.isAfter(checkInDate)) {
-                    System.out.println("The date must be greater then " + checkInDate + ":");
-                } else {
-                    success = true;
-                    return dateParse;
-                }
-            } else {
-                if (checkInDate.isBefore(roomOccupiedFromDate)) {
-                    if (dateParse.isAfter(checkInDate) && (!dateParse.isAfter(roomOccupiedFromDate))) {
+            for (int i = 0; i < r.size(); i++) {
+                if (r.get(i).getFreeTo() != null) {
+                    if ((dateParse.isAfter(checkInDate)) && (!dateParse.isAfter(r.get(i).getFreeTo()))) {
                         success = true;
                         return dateParse;
-                    } else {
-                        System.out.println("The date must be between " + (checkInDate.plusDays(1)) + " - " + roomOccupiedFromDate + ":");
                     }
-                } else {
-                    if (dateParse.isAfter(checkInDate)) {
+                }
+                if (r.get(i).getFreeTo() == null) {
+                    if (dateParse.isAfter(checkInDate) && (!checkInDate.isBefore(r.get(i).getFreeFrom()))) {
                         success = true;
                         return dateParse;
-
-                    } else {
+                    }
+                }
+            }
+            if (!success) {
+                for (int j = 0; j < r.size(); j++) {
+                    if (!r.get(j).getFreeFrom().isAfter(checkInDate) && r.get(j).getFreeTo() != null && r.get(j).getFreeTo().isAfter(checkInDate)) {
+                        System.out.println("The date must be greater then " + checkInDate + " and lower/equal to " + r.get(j).getFreeTo() + ":");
+                    } else if (!r.get(j).getFreeFrom().isAfter(checkInDate) && r.get(j).getFreeTo() == null) {
                         System.out.println("The date must be greater then " + checkInDate + ":");
                     }
                 }
+
             }
         }
         return null;

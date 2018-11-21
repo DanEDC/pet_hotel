@@ -1,70 +1,139 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.LinkedList;
 
 public class Room {
 
     private int roomNumber;
-    private LocalDate occupiedFrom;
-    private LocalDate occupiedTo;
+    private LinkedList<RoomBookedDates> bookedDates;
 
     public Room() {
     }
 
     public Room(int roomNumber) {
         this.roomNumber = roomNumber;
-        this.occupiedFrom = null;
-        this.occupiedTo = null;
+        this.bookedDates = new LinkedList();
     }
 
     public void printHotelRoomsAvailability(ArrayList<Room> roomList) {
-        ListIterator<Room> roomIterator = roomList.listIterator();
-        System.out.println("Pet Hotel rooms availability:");
-        while (roomIterator.hasNext()) {
-            if (roomIterator.next().getOccupiedFrom() == null) {
-                roomIterator.previous();
-                System.out.println("Room number: '" + roomIterator.next().getRoomNumber() + "', Occupied from: '          ', Occupied to: '          '");
+        for (int i = 0; i < roomList.size(); i++) {
+            printSingleRoomAvailability(roomList.get(i));
+        }
+    }
+
+    public void printSingleRoomAvailability(Room room) {
+        LinkedList<RoomAvailableDates> r = roomAvailability(room);
+        System.out.print("Room number: '" + room.getRoomNumber() + "', Available from: ");
+        for (int i = 0; i < r.size(); i++) {
+            if (r.get(i).getFreeTo() == null) {
+                System.out.print("'" + r.get(i).getFreeFrom() + "', to: '          '.");
             } else {
-                roomIterator.previous();
-                System.out.println(roomIterator.next());
+                System.out.print(r.get(i));
+            }
+        }
+        System.out.println();
+    }
+
+    private void sortBookedDatesChronological(LinkedList<RoomBookedDates> r) {
+        boolean flag = true;
+        while (flag) {
+            flag = false;
+            for (int i = 1; i < r.size(); ++i) {
+                if (r.get(i).getOccupiedFrom().isBefore(r.get(i - 1).getOccupiedFrom())) {
+                    RoomBookedDates objectBefore = new RoomBookedDates(r.get(i).getOccupiedFrom(), r.get(i).getOccupiedTo());
+                    RoomBookedDates objectAfter = new RoomBookedDates(r.get(i - 1).getOccupiedFrom(), r.get(i - 1).getOccupiedTo());
+                    r.set((i - 1), objectBefore);
+                    r.set((i), objectAfter);
+                    flag = true;
+                }
             }
         }
     }
 
-    public void printSingleRoomAvailability(ArrayList<Room> roomList, int roomNumber) {
-        if (roomList.get(roomNumber).getOccupiedFrom() == null) {
-            System.out.println("Room number: '" + roomNumber + "', Occupied from:'          ', Occupied to:'          '");
-        } else {
-            System.out.println(roomList.get(roomNumber - 1));
+    private LinkedList<RoomAvailableDates> generateRoomAvailabilityDates(Room roomToCheck) {
+        LinkedList<RoomAvailableDates> r = new LinkedList<>();
+        LinkedList<RoomBookedDates> b = roomToCheck.getBookedDates();
+        sortBookedDatesChronological(b);
+        if (b.size() == 0) {
+            RoomAvailableDates roomAvailableDate = new RoomAvailableDates(LocalDate.now(), null);
+            r.add(roomAvailableDate);
         }
+        if (b.size() == 1) {
+            if (!LocalDate.now().isBefore(b.getFirst().getOccupiedTo())) {
+                b.removeFirst();
+                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(LocalDate.now(), null);
+                r.add(roomAvailableDate);
+            } else if (!LocalDate.now().isBefore(b.getFirst().getOccupiedFrom())) {
+                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(b.getFirst().getOccupiedTo(), null);
+                r.add(roomAvailableDate);
+            } else {
+                RoomAvailableDates r1 = new RoomAvailableDates(LocalDate.now(), b.getFirst().getOccupiedFrom());
+                RoomAvailableDates r2 = new RoomAvailableDates(b.getFirst().getOccupiedTo(), null);
+                r.add(r1);
+                r.add(r2);
+            }
+        }
+        for (int i = 0; i < (b.size() - 1); i++) {
+            if (b.get(i).getOccupiedTo().isBefore(b.get(i + 1).getOccupiedFrom())) {
+                LocalDate freeFrom = b.get(i).getOccupiedTo();
+                LocalDate freeTo = b.get(i + 1).getOccupiedFrom();
+                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, freeTo);
+                r.add(roomAvailableDate);
+            }
+        }
+        if (b.size() > 1) {
+            if (LocalDate.now().isBefore(b.getFirst().getOccupiedFrom())) {
+                LocalDate freeFrom = LocalDate.now();
+                LocalDate freeTo = b.getFirst().getOccupiedFrom();
+                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, freeTo);
+                r.addFirst(roomAvailableDate);
+            } else {
+                LocalDate freeFrom = b.getLast().getOccupiedTo();
+                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, null);
+                r.add(roomAvailableDate);
+            }
+        }
+
+        return r;
+    }
+
+    public LinkedList<RoomAvailableDates> roomAvailability(Room roomToCheck) {
+        LinkedList<RoomAvailableDates> r = generateRoomAvailabilityDates(roomToCheck);
+        for (int i = 0; i < r.size(); i++) {
+            if (r.get(i).getFreeTo() == null) {
+                if (!r.get(i).getFreeFrom().isAfter(LocalDate.now())) {
+                    r.get(i).setFreeFrom(LocalDate.now());
+                }
+            } else if ((LocalDate.now().isAfter(r.get(i).getFreeTo()))) {
+                if (r.size() == 1) {
+                    r.remove(i);
+                    RoomAvailableDates newDate = new RoomAvailableDates(LocalDate.now(), null);
+                    r.add(newDate);
+                } else {
+                    r.remove(i);
+                }
+            } else if ((LocalDate.now().isAfter(r.get(i).getFreeFrom()) && (!LocalDate.now().isAfter(r.get(i).getFreeTo())))) {
+                if (LocalDate.now().isEqual(r.get(i).getFreeTo())) {
+                    r.remove(i);
+                } else {
+                    r.get(i).setFreeFrom(LocalDate.now());
+                }
+            }
+
+        }
+        return r;
     }
 
     public int getRoomNumber() {
         return roomNumber;
     }
 
-    public LocalDate getOccupiedFrom() {
-        return occupiedFrom;
+    public LinkedList<RoomBookedDates> getBookedDates() {
+        return bookedDates;
     }
 
-    public void setOccupiedFrom(LocalDate occupiedFrom) {
-        this.occupiedFrom = occupiedFrom;
-    }
-
-    public LocalDate getOccupiedTo() {
-        return occupiedTo;
-    }
-
-    public void setOccupiedTo(LocalDate occupiedTo) {
-        this.occupiedTo = occupiedTo;
-    }
-
-    @Override
-    public String toString() {
-        return "Room number: '" + roomNumber +
-                "', Occupied from: '" + occupiedFrom +
-                "', Occupied to: '" + occupiedTo +
-                "'";
+    public void setBookedDates(LinkedList<RoomBookedDates> bookedDates) {
+        this.bookedDates = bookedDates;
     }
 }
 

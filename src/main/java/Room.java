@@ -124,6 +124,15 @@ public class Room {
         return r;
     }
 
+    public void deleteBookedDates(ArrayList<Room> rooms, Pet pet) {
+        LinkedList<RoomBookedDates> l = rooms.get(pet.getRoomNumber() - 1).getBookedDates();
+        for (int i = 0; i < l.size(); i++) {
+            if (pet.getCheckInDate().isEqual(l.get(i).getOccupiedFrom())) {
+                l.remove(i);
+            }
+        }
+    }
+
     public int getRoomNumber() {
         return roomNumber;
     }
@@ -132,8 +141,5 @@ public class Room {
         return bookedDates;
     }
 
-    public void setBookedDates(LinkedList<RoomBookedDates> bookedDates) {
-        this.bookedDates = bookedDates;
-    }
 }
 

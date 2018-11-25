@@ -13,7 +13,6 @@ public class HotelAdministration {
         this.registeredPetsList = new LinkedList<>();
         this.roomsList = new ArrayList<>();
         roomsInHotel(placesInHotel);
-        hotelCheckOutCheckIn();
     }
 
     private void roomsInHotel(int placesInHotel) {
@@ -64,47 +63,86 @@ public class HotelAdministration {
 
     public void deletePetRegistration(Scanner scanner) {
         System.out.println("Enter Pet index number followed by his name:");
-        int index = scanner.nextInt();
+        int index = validation.checkIntFormat(scanner);
         String petName = scanner.next();
-        if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
-            registeredPetsList.remove(index - 1);
-            System.out.println(petName + " from position " + index + ". has been removed from the registered list");
-        } else {
+        try {
+            if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
+                Pet petToDelete = registeredPetsList.get(index - 1);
+                room.deleteBookedDates(roomsList, petToDelete);
+                registeredPetsList.remove(index - 1);
+                System.out.println(petName + " from position " + index + ". has been removed from the registered list");
+            } else {
+                System.out.println(petName + " is not found on position " + index + ".");
+            }
+        } catch (IndexOutOfBoundsException e) {
             System.out.println(petName + " is not found on position " + index + ".");
         }
     }
 
     public void modifyPetData(Scanner scanner) {
         System.out.println("Enter Pet index number followed by his name:");
-        int index = scanner.nextInt();
+        int index = validation.checkIntFormat(scanner);
         String petName = scanner.next();
-        if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
-            Pet petToChange = registeredPetsList.get(index - 1);
-            System.out.println("Please select new details for " + petName + ":");
-            System.out.println("Enter animal type:");
-            petToChange.setAnimalType(scanner.next());
-            System.out.println("Enter animal race:");
-            petToChange.setRaceType(scanner.next());
-            System.out.println("Enter animal age:");
-            petToChange.setAnimalAge(scanner.nextInt());
-            System.out.println("Change data succeed:");
-            System.out.println(petToChange);
-        } else {
+        try {
+            if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
+                Pet petToChange = registeredPetsList.get(index - 1);
+                System.out.println("Please select new details for " + petName + ":");
+                System.out.println("Enter animal type:");
+                petToChange.setAnimalType(scanner.next());
+                System.out.println("Enter animal race:");
+                petToChange.setRaceType(scanner.next());
+                System.out.println("Enter animal age:");
+                petToChange.setAnimalAge(validation.checkIntFormat(scanner));
+                System.out.println("Current room number is " + petToChange.getRoomNumber() + ". Do you want to change the room?");
+                System.out.println("Y - yes, N - no");
+                if (validation.checkYAndNFormat(scanner)) {
+                    room.deleteBookedDates(roomsList, petToChange);
+                    room.printHotelRoomsAvailability(roomsList);
+                    System.out.println("---------");
+                    System.out.println("Enter new room number, choose between 1 and " + placesInHotel + ":");
+                    petToChange.setRoomNumber(validation.roomNumberValidation(scanner, placesInHotel));
+                    Room chosenRoom = roomsList.get(petToChange.getRoomNumber() - 1);
+                    System.out.println("Please check room " + petToChange.getRoomNumber() + " availability:");
+                    room.printSingleRoomAvailability(chosenRoom);
+                    System.out.println("---------");
+                    System.out.println("Enter new check in date, YYYY-MM-DD:");
+                    LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom);
+                    petToChange.setCheckInDate(checkInDate);
+                    System.out.println("Enter new check out date, YYYY-MM-DD:");
+                    LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom);
+                    petToChange.setCheckOutDate(checkOutDate);
+                } else {
+                    room.deleteBookedDates(roomsList, petToChange);
+                    System.out.println("Please check room " + petToChange.getRoomNumber() + " availability:");
+                    Room chosenRoom = roomsList.get(petToChange.getRoomNumber() - 1);
+                    room.printSingleRoomAvailability(chosenRoom);
+                    System.out.println("---------");
+                    System.out.println("Enter new check in date, YYYY-MM-DD:");
+                    LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom);
+                    petToChange.setCheckInDate(checkInDate);
+                    System.out.println("Enter new check out date, YYYY-MM-DD:");
+                    LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom);
+                    petToChange.setCheckOutDate(checkOutDate);
+                }
+                System.out.println("Change data succeed:");
+                System.out.println(petToChange);
+            } else {
+                System.out.println(petName + " is not found on position " + index + ".");
+            }
+        } catch (IndexOutOfBoundsException e) {
             System.out.println(petName + " is not found on position " + index + ".");
+        }
+        }
+
+    public void printRegisteredPets() {
+        System.out.println("List of registered pets in hotel:");
+        for (int i = 0; i < registeredPetsList.size(); i++) {
+            Pet petToPrint = registeredPetsList.get(i);
+            System.out.println((i + 1) + ". " + petToPrint);
         }
     }
 
-//    public void printRegisteredPets() {
-//        room.printHotelRoomsAvailability(roomsList);
-//        System.out.println("-----------------------");
-//        System.out.println("List of registered pets in hotel:");
-//        for (int i = 0; i < registeredPetsList.size(); i++) {
-//            Pet petToPrint = registeredPetsList.get(i);
-//            System.out.println((i + 1) + ". " + petToPrint);
-//        }
-//    }
-
-    private void hotelCheckOutCheckIn() {
+    public void hotelCheckOutCheckIn() {
         ListIterator<Pet> listIterator = registeredPetsList.listIterator();
         while (listIterator.hasNext()) {
             if (LocalDate.now().isBefore(listIterator.next().getCheckOutDate())) {

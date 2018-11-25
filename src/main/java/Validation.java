@@ -135,4 +135,22 @@ public class Validation {
         return null;
     }
 
+    public boolean checkYAndNFormat(Scanner scanner) {
+        boolean success = false;
+        while (!success) {
+            String type = scanner.next();
+            if (type == "Y") {
+                success = true;
+                return true;
+            } else if (type == "N") {
+                success = true;
+                return false;
+            } else {
+                System.out.println("Please type Y or N:");
+                scanner.nextLine();
+            }
+        }
+        return false;
+    }
+
 }

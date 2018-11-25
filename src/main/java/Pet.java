@@ -82,9 +82,6 @@ public class Pet {
     return service;
   }
 
-  public void setService(Service service) {
-    this.service = service;
-  }
 
   @Override
   public boolean equals(Object o) {

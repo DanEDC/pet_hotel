@@ -43,8 +43,8 @@ public class HotelAdministration {
         String raceType = scanner.next();
         System.out.println("Enter animal age:");
         int animalAge = validation.animalAgeValidation(scanner);
-        Service service = null;
-        Pet newPet = new Pet(animalName, animalType, raceType, animalAge, roomNumber, checkInDate, checkOutDate, service);
+        Pet newPet = new Pet(animalName, animalType, raceType, animalAge, roomNumber, checkInDate, checkOutDate);
+        newPet.setService(addServiceToList(newPet, scanner));
         registeredPetsList.add(newPet);
         RoomBookedDates roomBookedDates = new RoomBookedDates(checkInDate, checkOutDate);
         chosenRoom.getBookedDates().add(roomBookedDates);
@@ -151,6 +151,18 @@ public class HotelAdministration {
                 listIterator.remove();
             }
         }
+    }
+
+    private ArrayList<Service> addServiceToList(Pet pet, Scanner scanner) {
+        ArrayList<Service> serviceList = pet.getService();
+        Service[] list = Service.values();
+        for (Service service : list) {
+            System.out.println("Type Y to include " + service + " into service list, neither type N:");
+            if (validation.checkYAndNFormat(scanner)) {
+                serviceList.add(service);
+            }
+        }
+        return serviceList;
     }
 }
 

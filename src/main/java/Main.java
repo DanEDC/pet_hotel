@@ -10,11 +10,11 @@ public class Main {
     Validation validation = new Validation();
     Scanner scanner  = new Scanner(System.in);
 
-    Pet pet1 = new Pet("Binek", "Dog", "Labrador", 4, 1, LocalDate.parse("2018-11-28"), LocalDate.parse("2018-11-30"), null);
-    Pet pet2 = new Pet("Franek", "Cat", "Cat", 2, 1, LocalDate.parse("2018-11-22"), LocalDate.parse("2018-11-28"), null);
-    Pet pet3 = new Pet("Olek", "Cat", "Cat", 8, 3, LocalDate.parse("2018-11-01"), LocalDate.parse("2018-11-16"), null);
-    Pet pet4 = new Pet("Nesik", "Cat", "Cat", 7, 4, LocalDate.parse("2018-11-18"), LocalDate.parse("2018-11-25"), null);
-    Pet pet5 = new Pet("Fifraczek", "Dog", "York", 8, 5, LocalDate.parse("2018-11-25"), LocalDate.parse("2018-11-30"), null);
+    Pet pet1 = new Pet("Binek", "Dog", "Labrador", 4, 1, LocalDate.parse("2018-11-28"), LocalDate.parse("2018-11-30"));
+    Pet pet2 = new Pet("Franek", "Cat", "Cat", 2, 1, LocalDate.parse("2018-11-22"), LocalDate.parse("2018-11-28"));
+    Pet pet3 = new Pet("Olek", "Cat", "Cat", 8, 3, LocalDate.parse("2018-11-01"), LocalDate.parse("2018-11-16"));
+    Pet pet4 = new Pet("Nesik", "Cat", "Cat", 7, 4, LocalDate.parse("2018-11-18"), LocalDate.parse("2018-11-25"));
+    Pet pet5 = new Pet("Fifraczek", "Dog", "York", 8, 5, LocalDate.parse("2018-11-25"), LocalDate.parse("2018-11-30"));
 
     hotelAdministration.registerNewPet(pet1);
     hotelAdministration.registerNewPet(pet2);

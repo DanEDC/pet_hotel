@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Pet {
@@ -9,9 +10,9 @@ public class Pet {
   private int roomNumber;
   private LocalDate checkInDate;
   private LocalDate checkOutDate;
-  private Service service;
+  private ArrayList<Service> service;
 
-  public Pet(String animalName, String animalType, String raceType, int animalAge, int roomNumber, LocalDate checkInDate, LocalDate checkOutDate, Service service) {
+  public Pet(String animalName, String animalType, String raceType, int animalAge, int roomNumber, LocalDate checkInDate, LocalDate checkOutDate) {
     this.animalName = animalName;
     this.animalType = animalType;
     this.raceType = raceType;
@@ -19,7 +20,7 @@ public class Pet {
     this.roomNumber = roomNumber;
     this.checkInDate = checkInDate;
     this.checkOutDate = checkOutDate;
-    this.service = service;
+    this.service = new ArrayList<>();
   }
 
   public String getAnimalName() {
@@ -78,10 +79,13 @@ public class Pet {
     this.checkOutDate = checkOutDate;
   }
 
-  public Service getService() {
+  public ArrayList<Service> getService() {
     return service;
   }
 
+  public void setService(ArrayList<Service> service) {
+    this.service = service;
+  }
 
   @Override
   public boolean equals(Object o) {

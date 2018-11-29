@@ -139,15 +139,14 @@ public class Validation {
         boolean success = false;
         while (!success) {
             String type = scanner.next();
-            if (type == "Y") {
+            if (type.equals("Y")) {
                 success = true;
                 return true;
-            } else if (type == "N") {
+            } else if (type.equals("N")) {
                 success = true;
                 return false;
             } else {
                 System.out.println("Please type Y or N:");
-                scanner.nextLine();
             }
         }
         return false;

@@ -39,6 +39,21 @@ public class Validation {
         return -1;
     }
 
+    //IN DEVELOPMENT
+    public String checkStringFormat(Scanner scanner) {
+        boolean success = false;
+        while (!success) {
+            if (scanner.hasNextInt()) {
+                System.out.println("Please type a text, instead of a number:");
+                scanner.nextLine();
+            } else {
+                success = true;
+                return scanner.next();
+            }
+        }
+        return null;
+    }
+
     public int animalAgeValidation(Scanner scanner) {
         boolean success = false;
         while (!success) {

@@ -87,6 +87,23 @@ public class Pet {
     this.service = service;
   }
 
+  private String printServiceList(ArrayList<Service> serviceList) {
+    StringBuilder builder = new StringBuilder();
+    if (serviceList.size() == 0) {
+      return "No additional service";
+    } else {
+      for (int i = 0; i < serviceList.size(); i++) {
+        if (i != (serviceList.size() - 1)) {
+          builder.append(serviceList.get(i) + ", ");
+        } else {
+          builder.append(serviceList.get(i));
+        }
+      }
+      return builder.toString();
+    }
+  }
+
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -105,16 +122,14 @@ public class Pet {
     return Objects.hash(getAnimalName(), getAnimalType(), getRaceType(), getAnimalAge(), getRoomNumber());
   }
 
-  @Override
-  public String toString() {
-    return
-        "Pet name: '" + animalName + '\'' +
-        ", Animal type: '" + animalType + '\'' +
-        ", Race: '" + raceType + '\'' +
-                ", Age: '" + animalAge + '\'' + ", Room number: '" + roomNumber + '\'' +
-        ", Check in date: '" + checkInDate + '\'' +
-        ", Check out date: '" + checkOutDate + '\'' +
-        ", Service: '" + service + '\'';
-
+  public String printPet(Pet pet) {
+    return "Pet name: '" + pet.getAnimalName() + "', " +
+            "Animal type: '" + pet.getAnimalType() + "', " +
+            "Race: '" + pet.getAnimalName() + "', " +
+            "Age: '" + pet.getAnimalAge() + "', " +
+            "Room number: '" + pet.getRoomNumber() + "', " +
+            "Check in date: '" + pet.getCheckInDate() + "', " +
+            "Check out date: '" + pet.getCheckOutDate() + "', " +
+            "Service: '" + printServiceList(pet.getService()) + "'";
   }
 }

@@ -5,7 +5,6 @@ public enum Service {
     TAMING("Personal taming"),
     TRANSPORT("Transport");
 
-    Validation validation;
     String serviceName;
 
     Service(String serviceName) {

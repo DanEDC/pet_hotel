@@ -36,11 +36,11 @@ public class HotelAdministration {
         System.out.println("Enter check out date, YYYY-MM-DD:");
         LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom);
         System.out.println("Enter animal name:");
-        String animalName = scanner.next();
+        String animalName = validation.checkStringFormat(scanner);
         System.out.println("Enter animal type:");
-        String animalType = scanner.next();
+        String animalType = validation.checkStringFormat(scanner);
         System.out.println("Enter animal race:");
-        String raceType = scanner.next();
+        String raceType = validation.checkStringFormat(scanner);
         System.out.println("Enter animal age:");
         int animalAge = validation.animalAgeValidation(scanner);
         Pet newPet = new Pet(animalName, animalType, raceType, animalAge, roomNumber, checkInDate, checkOutDate);
@@ -136,9 +136,14 @@ public class HotelAdministration {
 
     public void printRegisteredPets() {
         System.out.println("List of registered pets in hotel:");
-        for (int i = 0; i < registeredPetsList.size(); i++) {
-            Pet petToPrint = registeredPetsList.get(i);
-            System.out.println((i + 1) + ". " + petToPrint);
+        if (registeredPetsList.size() == 0) {
+            System.out.println("There are no registered pets in the hotel at the moment");
+        } else {
+            for (int i = 0; i < registeredPetsList.size(); i++) {
+                Pet petToPrint = registeredPetsList.get(i);
+                System.out.print((i + 1) + ". " + petToPrint.printPet(petToPrint));
+                System.out.println();
+            }
         }
     }
 

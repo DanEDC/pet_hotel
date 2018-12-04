@@ -52,15 +52,6 @@ public class HotelAdministration {
         return newPet;
     }
 
-    public void registerNewPet(Pet pet) {
-
-        registeredPetsList.add(pet);
-        Room petRoom = roomsList.get((pet.getRoomNumber()) - 1);
-        RoomBookedDates roomBookedDates = new RoomBookedDates(pet.getCheckInDate(), pet.getCheckOutDate());
-        petRoom.getBookedDates().add(roomBookedDates);
-    }
-
-
     public void deletePetRegistration(Scanner scanner) {
         System.out.println("Enter Pet index number followed by his name:");
         int index = validation.checkIntFormat(scanner);
@@ -85,50 +76,16 @@ public class HotelAdministration {
         String petName = scanner.next();
         try {
             if (registeredPetsList.get(index - 1).getAnimalName().equals(petName)) {
-                Pet petToChange = registeredPetsList.get(index - 1);
-                System.out.println("Please select new details for " + petName + ":");
-                System.out.println("Enter animal type:");
-                petToChange.setAnimalType(scanner.next());
-                System.out.println("Enter animal race:");
-                petToChange.setRaceType(scanner.next());
-                System.out.println("Enter animal age:");
-                petToChange.setAnimalAge(validation.checkIntFormat(scanner));
-                System.out.println("Current room number is " + petToChange.getRoomNumber() + ". Do you want to change the room?");
-                System.out.println("Y - yes, N - no");
-                if (validation.checkYAndNFormat(scanner)) {
-                    room.deleteBookedDates(roomsList, petToChange);
-                    room.printHotelRoomsAvailability(roomsList);
-                    System.out.println("---------");
-                    System.out.println("Enter new room number, choose between 1 and " + placesInHotel + ":");
-                    petToChange.setRoomNumber(validation.roomNumberValidation(scanner, placesInHotel));
-                    Room chosenRoom = roomsList.get(petToChange.getRoomNumber() - 1);
-                    System.out.println("Please check room " + petToChange.getRoomNumber() + " availability:");
-                    room.printSingleRoomAvailability(chosenRoom);
-                    System.out.println("---------");
-                    System.out.println("Enter new check in date, YYYY-MM-DD:");
-                    LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom);
-                    petToChange.setCheckInDate(checkInDate);
-                    System.out.println("Enter new check out date, YYYY-MM-DD:");
-                    LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom);
-                    petToChange.setCheckOutDate(checkOutDate);
-                } else {
-                    room.deleteBookedDates(roomsList, petToChange);
-                    System.out.println("Please check room " + petToChange.getRoomNumber() + " availability:");
-                    Room chosenRoom = roomsList.get(petToChange.getRoomNumber() - 1);
-                    room.printSingleRoomAvailability(chosenRoom);
-                    System.out.println("---------");
-                    System.out.println("Enter new check in date, YYYY-MM-DD:");
-                    LocalDate checkInDate = validation.checkInDateValidation(scanner, chosenRoom);
-                    petToChange.setCheckInDate(checkInDate);
-                    System.out.println("Enter new check out date, YYYY-MM-DD:");
-                    LocalDate checkOutDate = validation.checkOutDateValidation(scanner, checkInDate, chosenRoom);
-                    petToChange.setCheckOutDate(checkOutDate);
-                }
-                System.out.println("Change data succeed:");
-                System.out.println(petToChange);
+                Pet petToDelete = registeredPetsList.get(index - 1);
+                room.deleteBookedDates(roomsList, petToDelete);
+                registeredPetsList.remove(index - 1);
+                Pet newPet = registerPetInHotel(scanner);
+                registeredPetsList.remove(newPet);
+                registeredPetsList.add((index - 1), newPet);
             } else {
                 System.out.println(petName + " is not found on position " + index + ".");
             }
+
         } catch (IndexOutOfBoundsException e) {
             System.out.println(petName + " is not found on position " + index + ".");
         }

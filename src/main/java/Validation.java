@@ -39,16 +39,16 @@ public class Validation {
         return -1;
     }
 
-    //IN DEVELOPMENT
     public String checkStringFormat(Scanner scanner) {
         boolean success = false;
         while (!success) {
-            if (scanner.hasNextInt()) {
+            String text = scanner.next();
+            try {
+                Integer.parseInt(text);
                 System.out.println("Please type a text, instead of a number:");
-                scanner.nextLine();
-            } else {
+            } catch (NumberFormatException e) {
                 success = true;
-                return scanner.next();
+                return text;
             }
         }
         return null;

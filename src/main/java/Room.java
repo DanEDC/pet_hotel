@@ -131,6 +131,7 @@ public class Room {
                 l.remove(i);
             }
         }
+        roomAvailability(rooms.get(pet.getRoomNumber() - 1));
     }
 
     public int getRoomNumber() {

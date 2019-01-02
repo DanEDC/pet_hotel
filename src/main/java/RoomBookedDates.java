@@ -26,6 +26,13 @@ public class RoomBookedDates {
         this.occupiedTo = occupiedTo;
     }
 
+    @Override
+    public String toString() {
+        return "RoomBookedDates{" +
+                "occupiedFrom=" + occupiedFrom +
+                ", occupiedTo=" + occupiedTo +
+                '}';
+    }
 }
 
 

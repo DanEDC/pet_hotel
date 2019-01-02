@@ -34,11 +34,11 @@ public class Room {
         System.out.println();
     }
 
-    private void sortBookedDatesChronological(LinkedList<RoomBookedDates> r) {
+    public void sortBookedDatesChronological(LinkedList<RoomBookedDates> r) {
         boolean flag = true;
         while (flag) {
             flag = false;
-            for (int i = 1; i < r.size(); ++i) {
+            for (int i = 1; i < r.size(); i++) {
                 if (r.get(i).getOccupiedFrom().isBefore(r.get(i - 1).getOccupiedFrom())) {
                     RoomBookedDates objectBefore = new RoomBookedDates(r.get(i).getOccupiedFrom(), r.get(i).getOccupiedTo());
                     RoomBookedDates objectAfter = new RoomBookedDates(r.get(i - 1).getOccupiedFrom(), r.get(i - 1).getOccupiedTo());
@@ -48,6 +48,7 @@ public class Room {
                 }
             }
         }
+
     }
 
     private LinkedList<RoomAvailableDates> generateRoomAvailabilityDates(Room roomToCheck) {

@@ -51,7 +51,7 @@ public class Room {
 
     }
 
-    private LinkedList<RoomAvailableDates> generateRoomAvailabilityDates(Room roomToCheck) {
+    public LinkedList<RoomAvailableDates> generateRoomAvailabilityDates(Room roomToCheck) {
         LinkedList<RoomAvailableDates> r = new LinkedList<>();
         LinkedList<RoomBookedDates> b = roomToCheck.getBookedDates();
         sortBookedDatesChronological(b);
@@ -74,29 +74,29 @@ public class Room {
                 r.add(r2);
             }
         }
-        for (int i = 0; i < (b.size() - 1); i++) {
-            if (b.get(i).getOccupiedTo().isBefore(b.get(i + 1).getOccupiedFrom())) {
-                LocalDate freeFrom = b.get(i).getOccupiedTo();
-                LocalDate freeTo = b.get(i + 1).getOccupiedFrom();
-                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, freeTo);
-                r.add(roomAvailableDate);
-            }
-        }
         if (b.size() > 1) {
             if (LocalDate.now().isBefore(b.getFirst().getOccupiedFrom())) {
                 LocalDate freeFrom = LocalDate.now();
                 LocalDate freeTo = b.getFirst().getOccupiedFrom();
                 RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, freeTo);
                 r.addFirst(roomAvailableDate);
-            } else {
-                LocalDate freeFrom = b.getLast().getOccupiedTo();
-                RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, null);
-                r.add(roomAvailableDate);
             }
+            for (int i = 0; i < (b.size() - 1); i++) {
+                if (b.get(i).getOccupiedTo().isBefore(b.get(i + 1).getOccupiedFrom())) {
+                    LocalDate freeFrom = b.get(i).getOccupiedTo();
+                    LocalDate freeTo = b.get(i + 1).getOccupiedFrom();
+                    RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, freeTo);
+                    r.add(roomAvailableDate);
+                }
+            }
+            LocalDate freeFrom = b.getLast().getOccupiedTo();
+            RoomAvailableDates roomAvailableDate = new RoomAvailableDates(freeFrom, null);
+            r.add(roomAvailableDate);
         }
 
         return r;
     }
+
 
     public LinkedList<RoomAvailableDates> roomAvailability(Room roomToCheck) {
         LinkedList<RoomAvailableDates> r = generateRoomAvailabilityDates(roomToCheck);

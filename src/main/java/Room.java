@@ -22,7 +22,7 @@ public class Room {
     }
 
     public void printSingleRoomAvailability(Room room) {
-        LinkedList<RoomAvailableDates> r = roomAvailability(room);
+        LinkedList<RoomAvailableDates> r = generateRoomAvailabilityDates(room);
         System.out.print("Room number: '" + room.getRoomNumber() + "', Available from: ");
         for (int i = 0; i < r.size(); i++) {
             if (r.get(i).getFreeTo() == null) {
@@ -98,42 +98,15 @@ public class Room {
     }
 
 
-    public LinkedList<RoomAvailableDates> roomAvailability(Room roomToCheck) {
-        LinkedList<RoomAvailableDates> r = generateRoomAvailabilityDates(roomToCheck);
-        for (int i = 0; i < r.size(); i++) {
-            if (r.get(i).getFreeTo() == null) {
-                if (!r.get(i).getFreeFrom().isAfter(LocalDate.now())) {
-                    r.get(i).setFreeFrom(LocalDate.now());
-                }
-            } else if ((LocalDate.now().isAfter(r.get(i).getFreeTo()))) {
-                if (r.size() == 1) {
-                    r.remove(i);
-                    RoomAvailableDates newDate = new RoomAvailableDates(LocalDate.now(), null);
-                    r.add(newDate);
-                } else {
-                    r.remove(i);
-                }
-            } else if ((LocalDate.now().isAfter(r.get(i).getFreeFrom()) && (!LocalDate.now().isAfter(r.get(i).getFreeTo())))) {
-                if (LocalDate.now().isEqual(r.get(i).getFreeTo())) {
-                    r.remove(i);
-                } else {
-                    r.get(i).setFreeFrom(LocalDate.now());
-                }
-            }
-
-        }
-        return r;
-    }
-
     public void deleteBookedDates(ArrayList<Room> rooms, Pet pet) {
         LinkedList<RoomBookedDates> l = rooms.get(pet.getRoomNumber() - 1).getBookedDates();
         for (int i = 0; i < l.size(); i++) {
-            if (pet.getCheckInDate().isEqual(l.get(i).getOccupiedFrom())) {
+            if (pet.getCheckOutDate().isEqual(l.get(i).getOccupiedTo())) {
                 l.remove(i);
             }
         }
-        roomAvailability(rooms.get(pet.getRoomNumber() - 1));
     }
+
 
     public int getRoomNumber() {
         return roomNumber;

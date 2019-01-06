@@ -2,13 +2,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
+
+import static org.junit.Assert.assertEquals;
 
 public class RoomTest {
 
-    public Room testRoom;
-    public LinkedList<RoomAvailableDates> r;
+    private Room testRoom;
+    private LinkedList<RoomAvailableDates> r;
+    private ByteArrayOutputStream consoleOutput;
 
     @Before
     public void setUp() {
@@ -169,6 +175,58 @@ public class RoomTest {
         r.add(roomAvailableDate4);
 
         Assert.assertEquals(r.toString(), testRoom.generateRoomAvailabilityDates(testRoom).toString());
+
+    }
+
+    @Test
+    public void shouldRemoveBookedDatesAndGenerateNewAvailableDates() {
+        //Given
+        Pet pet = new Pet("Pet", "Dog", "Doggy", 3, 1, LocalDate.now().plusDays(8), LocalDate.now().plusDays(10));
+        Room testRoom2 = new Room(2);
+        ArrayList<Room> rooms = new ArrayList<>();
+
+        rooms.add(testRoom);
+        rooms.add(testRoom2);
+
+        RoomBookedDates testBookedDates1 = new RoomBookedDates(LocalDate.now().plusDays(2), LocalDate.now().plusDays(5));
+        RoomBookedDates testBookedDates2 = new RoomBookedDates(LocalDate.now().plusDays(8), LocalDate.now().plusDays(10));
+        RoomBookedDates testBookedDates3 = new RoomBookedDates(LocalDate.now().plusDays(12), LocalDate.now().plusDays(15));
+        RoomBookedDates testBookedDates4 = new RoomBookedDates(LocalDate.now().plusDays(1), LocalDate.now().plusDays(5));
+        testRoom.getBookedDates().add(testBookedDates1);
+        testRoom.getBookedDates().add(testBookedDates2);
+        testRoom.getBookedDates().add(testBookedDates3);
+        testRoom2.getBookedDates().add(testBookedDates4);
+
+        RoomAvailableDates roomAvailableDate1 = new RoomAvailableDates(LocalDate.now(), LocalDate.now().plusDays(2));
+        RoomAvailableDates roomAvailableDate2 = new RoomAvailableDates(LocalDate.now().plusDays(5), LocalDate.now().plusDays(12));
+        RoomAvailableDates roomAvailableDate3 = new RoomAvailableDates(LocalDate.now().plusDays(15), null);
+        r.add(roomAvailableDate1);
+        r.add(roomAvailableDate2);
+        r.add(roomAvailableDate3);
+
+        //When
+        testRoom.deleteBookedDates(rooms, pet);
+
+        //Expected
+        Assert.assertEquals(r.toString(), testRoom.generateRoomAvailabilityDates(testRoom).toString());
+    }
+
+    @Test
+    public void shouldPrintRoomAvailableDates() {
+        //Given
+        RoomBookedDates testBookedDates1 = new RoomBookedDates(LocalDate.now().plusDays(2), LocalDate.now().plusDays(5));
+        testRoom.getBookedDates().add(testBookedDates1);
+
+        consoleOutput = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(consoleOutput));
+
+        //When
+        testRoom.printSingleRoomAvailability(testRoom);
+
+
+        //Expected
+        assertEquals("Room number: '1', Available from: '" + LocalDate.now() + "', to: '" + LocalDate.now().plusDays(2) + "' | '" + LocalDate.now().plusDays(5) + "', to: '          '." + System.lineSeparator(), consoleOutput.toString());
+
 
     }
 }

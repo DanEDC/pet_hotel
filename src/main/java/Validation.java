@@ -83,7 +83,7 @@ public class Validation {
     }
 
     public LocalDate checkInDateValidation(Scanner scanner, Room room) {
-        LinkedList<RoomAvailableDates> r = room.roomAvailability(room);
+        LinkedList<RoomAvailableDates> r = room.generateRoomAvailabilityDates(room);
         boolean success = false;
         while (!success) {
             String date = checkDateFormat(scanner);
@@ -117,7 +117,7 @@ public class Validation {
     }
 
     public LocalDate checkOutDateValidation(Scanner scanner, LocalDate checkInDate, Room room) {
-        LinkedList<RoomAvailableDates> r = room.roomAvailability(room);
+        LinkedList<RoomAvailableDates> r = room.generateRoomAvailabilityDates(room);
         boolean success = false;
         while (!success) {
             String date = checkDateFormat(scanner);

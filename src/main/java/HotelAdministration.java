@@ -104,12 +104,12 @@ public class HotelAdministration {
         }
     }
 
-    public void hotelCheckOutCheckIn() {
+    public void hotelCheckOut() {
         ListIterator<Pet> listIterator = registeredPetsList.listIterator();
         while (listIterator.hasNext()) {
-            if (LocalDate.now().isBefore(listIterator.next().getCheckOutDate())) {
-            } else {
-                System.out.println(listIterator.previous().getAnimalName() + " has been checked out from the hotel");
+            if (LocalDate.now().isEqual(listIterator.next().getCheckOutDate())) {
+                room.deleteBookedDates(roomsList, listIterator.previous());
+                System.out.println(listIterator.next().getAnimalName() + " has been checked out from the hotel");
                 listIterator.remove();
             }
         }

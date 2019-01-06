@@ -11,7 +11,7 @@ public class Main {
 
     boolean quit = false;
     int choice = 0;
-    hotelAdministration.hotelCheckOutCheckIn();
+      hotelAdministration.hotelCheckOut();
     printMenu();
     while (!quit) {
       System.out.println("Enter your choice: ");

@@ -80,8 +80,8 @@ public class HotelAdministration {
                 room.deleteBookedDates(roomsList, petToDelete);
                 registeredPetsList.remove(index - 1);
                 Pet newPet = registerPetInHotel(scanner);
-                registeredPetsList.remove(newPet);
                 registeredPetsList.add((index - 1), newPet);
+                registeredPetsList.removeLast();
             } else {
                 System.out.println(petName + " is not found on position " + index + ".");
             }
